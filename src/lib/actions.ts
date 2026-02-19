@@ -4,10 +4,11 @@ import fs from 'fs';
 import path from 'path';
 
 export async function getProductImages() {
-    const imagesDirectory = path.join(process.cwd(), 'public/product_images');
+    const imagesDirectory = path.join(process.cwd(), 'public/Product_images');
 
     try {
         if (!fs.existsSync(imagesDirectory)) {
+            console.warn("Directory not found:", imagesDirectory);
             return [];
         }
 
@@ -21,7 +22,7 @@ export async function getProductImages() {
         });
 
         // Map to public URLs
-        return imageFiles.map(fileName => `/product_images/${fileName}`);
+        return imageFiles.map(fileName => `/Product_images/${fileName}`);
     } catch (error) {
         console.error("Error reading product images directory:", error);
         return [];
