@@ -332,17 +332,38 @@
 @media (max-width: 1024px) {
     .grid {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
 
     .gallery {
         position: relative;
-        height: 500px;
+        height: auto;
+        top: 0;
+        flex-direction: column;
+        gap: 20px;
     }
 
-    .zoomWindow {
-        display: none;
+    .thumbnails {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        justify-content: center;
+        padding-bottom: 10px;
     }
 
+    .thumb {
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+    }
+
+    .mainImageWrapper {
+        width: 100%;
+        aspect-ratio: 1;
+        min-height: 400px;
+    }
+
+    .zoomWindow,
     .zoomLens {
         display: none;
     }
@@ -353,21 +374,22 @@
 }
 
 @media (max-width: 600px) {
-    .gallery {
-        flex-direction: column-reverse;
-        height: auto;
-    }
 
-    .thumbnails {
-        flex-direction: row;
-        width: 100%;
+    .card {
+        padding: 20px 15px;
     }
 
     .mainImageWrapper {
-        aspect-ratio: 1;
+        min-height: 300px;
     }
 
     .title {
-        font-size: 1.25rem;
+        font-size: 1.35rem;
+        line-height: 1.4;
+        margin-top: 10px;
+    }
+
+    .priceMain {
+        font-size: 1.6rem;
     }
 }
