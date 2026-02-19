@@ -1,0 +1,106 @@
+.card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    position: relative;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    width: 100%;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border);
+}
+
+.badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--accent);
+    color: var(--white);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 1;
+}
+
+.imageWrapper {
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    margin-bottom: 15px;
+    background: #f9f9f9;
+}
+
+.image {
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover .image {
+    transform: scale(1.08);
+}
+
+.quickAdd {
+    position: absolute;
+    bottom: -50px;
+    left: 10px;
+    right: 10px;
+    background: var(--primary);
+    color: var(--white);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: bottom 0.3s ease;
+}
+
+.card:hover .quickAdd {
+    bottom: 10px;
+}
+
+.content {
+    text-align: left;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 8px;
+}
+
+.ratingValue {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: 5px;
+}
+
+.name {
+    font-family: var(--font-outfit);
+    font-size: 1.1rem;
+    color: var(--foreground);
+    margin-bottom: 5px;
+    height: 2.4em;
+    overflow: hidden;
+}
+
+.weight {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+}

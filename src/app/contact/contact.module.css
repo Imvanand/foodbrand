@@ -1,0 +1,252 @@
+.contactPage {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main {
+    flex: 1;
+    padding-top: 40px;
+    padding-bottom: 80px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.title {
+    font-family: var(--font-playfair);
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 60px;
+    align-items: start;
+}
+
+/* Contact Info Section */
+.infoSection {
+    background: #fdfdfd;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+}
+
+.infoTitle {
+    font-family: var(--font-playfair);
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 30px;
+}
+
+.infoList {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.infoItem {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.iconWrapper {
+    width: 45px;
+    height: 45px;
+    background: rgba(var(--primary-rgb), 0.1);
+    /* Assuming primary variable works or fallback */
+    background: #eef5ef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.infoContent h4 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.infoContent p {
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.socials {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+.socialIcons {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.socialLink {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+.socialLink:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Form Section */
+.formSection {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+.formTitle {
+    font-family: var(--font-playfair);
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.formSubtitle {
+    color: #666;
+    margin-bottom: 30px;
+    display: block;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.fullWidth {
+    grid-column: 1 / -1;
+}
+
+.label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.input,
+.textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+.input:focus,
+.textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+    /* Fallback needed if var not defined */
+    box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.submitBtn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+}
+
+.submitBtn:hover {
+    background: var(--primary-dark);
+    /* Fallback */
+    background: #1a6b1a;
+    transform: translateY(-2px);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .infoSection {
+        order: 2;
+    }
+
+    .formSection {
+        order: 1;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 2.2rem;
+    }
+
+    .formSection,
+    .infoSection {
+        padding: 20px;
+    }
+}

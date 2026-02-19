@@ -1,0 +1,253 @@
+.main {
+    background-color: #fff;
+    color: #1a1a1a;
+    line-height: 1.6;
+}
+
+.hero {
+    position: relative;
+    height: 70vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: white;
+}
+
+.heroImage {
+    object-fit: cover;
+    z-index: 1;
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7));
+    z-index: 2;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    max-width: 900px;
+    padding: 0 20px;
+}
+
+.heroBadge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.title {
+    font-family: var(--font-playfair);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.heroSubtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.section {
+    padding: 100px 0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.storyBlock {
+    margin-bottom: 80px;
+}
+
+.storyBlock:last-child {
+    margin-bottom: 0;
+}
+
+.blockHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.iconWrapper {
+    width: 50px;
+    height: 50px;
+    background: #fdf2f2;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.blockTitle {
+    font-family: var(--font-playfair);
+    font-size: 2.2rem;
+    color: #ce1212;
+}
+
+.paragraph {
+    font-size: 1.2rem;
+    color: #444;
+    margin-bottom: 20px;
+    max-width: 800px;
+}
+
+.quote {
+    font-family: var(--font-playfair);
+    font-size: 1.8rem;
+    font-style: italic;
+    color: #1a1a1a;
+    padding: 40px;
+    background: #f9f9f9;
+    border-left: 4px solid #ce1212;
+    margin: 40px 0;
+    position: relative;
+}
+
+.quote::before {
+    content: "“";
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: 5rem;
+    opacity: 0.1;
+    color: #ce1212;
+}
+
+.valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.valueCard {
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.valueCard:hover {
+    border-color: #ce1212;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.valueCard h4 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+}
+
+.valueCard p {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+}
+
+.listItem {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.listItem::before {
+    content: "•";
+    color: #ce1212;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.closing {
+    text-align: center;
+    padding: 120px 0;
+    background: #ce1212;
+    color: white;
+}
+
+.closing h2 {
+    font-family: var(--font-playfair);
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.closing p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.cta {
+    display: inline-block;
+    padding: 15px 40px;
+    background: white;
+    color: #ce1212;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cta:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 60vh;
+    }
+
+    .section {
+        padding: 60px 0;
+    }
+
+    .blockTitle {
+        font-size: 1.8rem;
+    }
+
+    .paragraph {
+        font-size: 1.1rem;
+    }
+
+    .quote {
+        font-size: 1.4rem;
+        padding: 30px;
+    }
+}
+
+.topMargin {
+    margin-top: 30px;
+}

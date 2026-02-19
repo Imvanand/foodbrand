@@ -1,0 +1,373 @@
+.showcaseSection {
+    padding: 60px 0;
+    background: #fdfcf8;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    /* Sharper Amazon look but with quality */
+    padding: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    position: relative;
+}
+
+/* Gallery Styles */
+.gallery {
+    display: flex;
+    gap: 15px;
+    height: 600px;
+    position: sticky;
+    top: 110px;
+    /* Navbar height (90px) + some spacing */
+    z-index: 1000;
+    /* Ensure zoom window is above details but below navbar */
+}
+
+.thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    min-width: 60px;
+}
+
+.thumbs::-webkit-scrollbar {
+    width: 0;
+}
+
+.thumb {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.thumb:hover,
+.activeThumb {
+    border-color: #e77600;
+    box-shadow: 0 0 5px rgba(231, 118, 0, 0.4);
+}
+
+.thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.mainImageWrapper {
+    flex-grow: 1;
+    position: relative;
+    background: #fff;
+    border: 1px solid #f3f3f3;
+    cursor: crosshair;
+}
+
+.mainImage {
+    object-fit: contain;
+    padding: 20px;
+}
+
+/* Zoom Components */
+.zoomLens {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(231, 118, 0, 0.05);
+    border: 1px solid #e77600;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.zoomWindow {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 20px);
+    width: 600px;
+    height: 600px;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    border: 1px solid #ddd;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    pointer-events: none;
+}
+
+/* Details Styles */
+.details {
+    display: flex;
+    flex-direction: column;
+}
+
+.breadcrumb {
+    font-size: 0.75rem;
+    color: #565959;
+    margin-bottom: 5px;
+}
+
+.brandLink {
+    font-size: 0.85rem;
+    color: #007185;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.brandLink:hover {
+    color: #c45500;
+    text-decoration: underline;
+}
+
+.title {
+    font-size: 1.5rem;
+    color: #0f1111;
+    line-height: 1.3;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.divider {
+    height: 1px;
+    background: #e7e7e7;
+    margin: 15px 0;
+}
+
+.priceArea {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.discountBadge {
+    color: #CC0C39;
+    font-size: 1.7rem;
+    font-weight: 300;
+}
+
+.priceColumn {
+    display: flex;
+    align-items: flex-start;
+}
+
+.priceSymbol {
+    font-size: 0.8rem;
+    margin-top: 8px;
+    margin-right: 2px;
+}
+
+.priceMain {
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+.mrp {
+    font-size: 0.85rem;
+    color: #565959;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+
+.inclusiveText {
+    font-size: 0.85rem;
+    color: #0f1111;
+    margin-top: 5px;
+}
+
+.vegBadge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: #0f1111;
+}
+
+.vegIcon {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #2d6244;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
+.vegIcon::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #2d6244;
+    border-radius: 50%;
+}
+
+.vegText {
+    font-weight: 700;
+}
+
+/* About Section */
+.aboutSection h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #0f1111;
+}
+
+.aboutList {
+    list-style: none;
+    /* Custom dots */
+    padding: 0;
+}
+
+.aboutList li {
+    position: relative;
+    padding-left: 20px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: #0f1111;
+}
+
+.aboutList li::before {
+    content: '•';
+    position: absolute;
+    left: 5px;
+    color: #565959;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+/* Technical Section */
+.technicalSection h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.techGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.techColumn h3 {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    color: #0f1111;
+}
+
+.techRow {
+    display: flex;
+    padding: 10px 0;
+    border-top: 1px solid #f3f3f3;
+    font-size: 0.85rem;
+}
+
+.label {
+    flex: 1;
+    font-weight: 700;
+    color: #565959;
+}
+
+.value {
+    flex: 1.5;
+    color: #0f1111;
+}
+
+/* CTA Wrapper */
+.ctaWrapper {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+}
+
+.buyBtn {
+    background: #FFD814;
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0F1111;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px 0 rgba(213, 217, 217, .5);
+}
+
+.buyBtn:hover {
+    background: #F7CA00;
+}
+
+.buyNowBtn {
+    background: #FFA41C;
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0F1111;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px 0 rgba(213, 217, 217, .5);
+}
+
+.buyNowBtn:hover {
+    background: #FA8914;
+}
+
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery {
+        position: relative;
+        height: 500px;
+    }
+
+    .zoomWindow {
+        display: none;
+    }
+
+    .zoomLens {
+        display: none;
+    }
+
+    .techGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .gallery {
+        flex-direction: column-reverse;
+        height: auto;
+    }
+
+    .thumbnails {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .mainImageWrapper {
+        aspect-ratio: 1;
+    }
+
+    .title {
+        font-size: 1.25rem;
+    }
+}

@@ -1,0 +1,193 @@
+.bulkSection {
+    padding: 100px 0;
+    background-color: var(--background);
+}
+
+.bulkCard {
+    background: linear-gradient(135deg, var(--primary) 0%, #1a3a28 100%);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.content {
+    padding: 60px;
+    color: var(--white);
+}
+
+.badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.content h2 {
+    font-size: 3rem;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.content p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 40px;
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+.ctaGroup {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.callBtn {
+    background: var(--white);
+    color: var(--primary);
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.callBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: var(--accent);
+    color: var(--primary);
+}
+
+.inquiryBtn {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.inquiryBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--white);
+}
+
+.imageWrapper {
+    background: rgba(255, 255, 255, 0.05);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.iconContainer {
+    opacity: 0.2;
+    color: var(--white);
+    margin-bottom: 30px;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.stats {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    justify-content: center;
+}
+
+.statItem {
+    text-align: center;
+}
+
+.statValue {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 4px;
+}
+
+.statLabel {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--white);
+    opacity: 0.7;
+}
+
+@media (max-width: 968px) {
+    .bulkCard {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        padding: 40px;
+        text-align: center;
+    }
+
+    .content p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ctaGroup {
+        justify-content: center;
+    }
+
+    .imageWrapper {
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 60px 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .content h2 {
+        font-size: 2.2rem;
+    }
+
+    .ctaGroup {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .callBtn,
+    .inquiryBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}

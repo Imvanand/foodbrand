@@ -1,0 +1,265 @@
+.main {
+    background: var(--background);
+}
+
+.hero {
+    position: relative;
+    height: 70vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    color: var(--white);
+    overflow: hidden;
+}
+
+.heroOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4));
+    z-index: 1;
+}
+
+.heroImage {
+    object-fit: cover;
+    z-index: 0;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 10;
+}
+
+.backLink {
+    display: inline-block;
+    color: var(--white);
+    margin-bottom: 30px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.backLink:hover {
+    opacity: 1;
+}
+
+.badge {
+    display: block;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+
+.hero h1 {
+    font-size: 4rem;
+    color: var(--white);
+    margin-bottom: 40px;
+    max-width: 800px;
+    line-height: 1.1;
+}
+
+.recipeMeta {
+    display: flex;
+    gap: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: fit-content;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 5px;
+}
+
+.value {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.contentSection {
+    padding: 100px 0;
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 60px;
+}
+
+.mainContent h2 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    color: var(--primary);
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.mainContent h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--accent);
+}
+
+.description {
+    margin-bottom: 60px;
+}
+
+.description p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #444;
+}
+
+.stepList {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.stepItem {
+    display: flex;
+    gap: 25px;
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid #f0f0f0;
+}
+
+.stepNumber {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.stepItem p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.sidebar {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.ingredientsBox {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.ingredientsBox h3 {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: var(--primary);
+}
+
+.ingredientList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ingredientList li {
+    display: flex;
+    gap: 12px;
+    font-size: 1rem;
+    color: #444;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #eee;
+}
+
+.ingredientList li:last-child {
+    border-bottom: none;
+}
+
+.bullet {
+    font-size: 0.9rem;
+}
+
+.promoCard {
+    background: var(--primary);
+    color: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.promoCard h4 {
+    color: var(--white);
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.promoCard p {
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+@media (max-width: 1024px) {
+    .contentGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .hero {
+        height: 60vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.25rem;
+    }
+
+    .recipeMeta {
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .description p {
+        font-size: 1.1rem;
+    }
+
+    .contentSection {
+        padding: 60px 0;
+    }
+}
