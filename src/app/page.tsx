@@ -8,8 +8,77 @@ import Footer from "@/components/Footer/Footer";
 import styles from "./page.module.css";
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Spice Mix Masala",
+    "image": "https://kalsafoods.com/Front.png",
+    "description": "Premium All-Purpose Indian Spice Blend for Sabzi, Paneer & Curry. Rich Aroma & Authentic Taste with No Added Colors.",
+    "brand": {
+      "@type": "Brand",
+      "name": "Kalsa Foods"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": "https://kalsafoods.com",
+      "priceCurrency": "INR",
+      "price": "89.00",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/InStock",
+      "itemCondition": "https://schema.org/NewCondition"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "128"
+    }
+  };
+
+  const businessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Kalsa Foods",
+    "image": "https://kalsafoods.com/logo/logo.png",
+    "@id": "https://kalsafoods.com",
+    "url": "https://kalsafoods.com",
+    "telephone": "+918709438350",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "K R Puram",
+      "addressLocality": "Bangalore",
+      "postalCode": "560036",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 12.9866,
+      "longitude": 77.7011
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "09:00",
+      "closes": "21:00"
+    }
+  };
+
   return (
     <main className={styles.main}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+      />
       <Navbar />
       <HeroSlider />
 

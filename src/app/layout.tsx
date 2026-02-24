@@ -13,9 +13,48 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Kalsa Foods | Pure Organic & Healthy Food Products",
-  description: "Experience the purity of nature with Kalsa Foods. We bring you the finest organic pulses, spices, and grains straight from the farm.",
+  metadataBase: new URL('https://kalsafoods.com'),
+  title: {
+    default: "Kalsa Foods | Inspired by Generations of Home Cooking",
+    template: "%s | Kalsa Foods"
+  },
+  description: "Experience the authentic taste of India with Kalsa Foods Premium Indian Masala. Carefully sourced, finely ground, and hygienically packed, our spices bring rich aroma and bold flavor to every dish.",
+  keywords: ["Indian Spices", "Organic Masala", "Kalsa Foods", "Authentic Indian Spices", "Healthy Spices", "Handmade Masala", "Spice Mix Masala"],
+  authors: [{ name: "Kalsa Foods" }],
+  creator: "Kalsa Foods",
+  publisher: "Kalsa Foods",
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://kalsafoods.com",
+    title: "Kalsa Foods | Inspired by Generations of Home Cooking",
+    description: "Experience the authentic taste of India with Kalsa Foods Premium Indian Masala. Carefully sourced, finely ground, and hygienically packed.",
+    siteName: "Kalsa Foods",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Kalsa Foods - Premium Indian Masala",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kalsa Foods | Premium Indian Masala",
+    description: "Authentic taste of India with Kalsa Foods Premium Spices.",
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
+
+import ChatWidget from "@/components/ChatWidget/ChatWidget";
 
 export default function RootLayout({
   children,
@@ -26,6 +65,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${outfit.variable} ${playfair.variable}`}>
         {children}
+        <ChatWidget />
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar/Navbar';
@@ -6,6 +7,26 @@ import Footer from '@/components/Footer/Footer';
 import styles from './RecipePage.module.css';
 
 import { recipes } from '@/data/recipes';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const recipe = recipes.find(r => r.slug === slug);
+
+    if (!recipe) return { title: 'Recipe Not Found' };
+
+    return {
+        title: `${recipe.title} Recipe`,
+        description: recipe.summary,
+        alternates: {
+            canonical: `/recipes/${slug}`,
+        },
+        openGraph: {
+            title: recipe.title,
+            description: recipe.summary,
+            images: [{ url: recipe.image }],
+        }
+    };
+}
 
 export default async function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -24,8 +45,33 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
         );
     }
 
+    const recipeJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Recipe",
+        "name": recipe.title,
+        "image": recipe.image,
+        "description": recipe.summary,
+        "recipeIngredient": recipe.ingredients,
+        "recipeInstructions": recipe.steps.map(step => ({
+            "@type": "HowToStep",
+            "text": step
+        })),
+        "author": {
+            "@type": "Person",
+            "name": recipe.author
+        },
+        "datePublished": recipe.date,
+        "prepTime": `PT${recipe.prepTime.replace(' mins', 'M')}`,
+        "cookTime": `PT${recipe.cookTime.replace(' mins', 'M')}`,
+        "recipeYield": recipe.servings
+    };
+
     return (
         <main className={styles.main}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(recipeJsonLd) }}
+            />
             <Navbar />
 
             <div className={styles.hero}>

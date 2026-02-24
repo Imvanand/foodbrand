@@ -4,6 +4,7 @@ import React, { useState, useRef, MouseEvent, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './ProductShowcase.module.css';
 import { getProductImages } from '@/lib/actions';
+import CheckoutModal from '../CheckoutModal/CheckoutModal';
 
 const ProductShowcase = () => {
     const [productImages, setProductImages] = useState<string[]>([]);
@@ -12,6 +13,8 @@ const ProductShowcase = () => {
     const [isZooming, setIsZooming] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = useState(false);
+    const [quantity, setQuantity] = useState(5);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -27,10 +30,10 @@ const ProductShowcase = () => {
 
     const product = {
         name: "Kalsa foods 100% Natural Spice Mix Masala Powder 100gm",
-        fullName: "Kalsa foods 100% Natural Spice Mix Masala Powder 100gm No Added Colours and Chemicals with Aromatic Blend of Whole Spices for Cooking",
+        fullName: "Spice Mix Masala | All-Purpose Indian Spice Blend | For Sabzi, Paneer & Curry | Rich Aroma & Authentic Taste | No Added Colors | 100g",
         tagline: "Experience the true taste of homemade goodness",
-        price: "₹299",
-        originalPrice: "₹399",
+        price: "₹89",
+        originalPrice: "₹179",
         dietType: "Vegetarian",
         aboutItems: [
             "Inspired by Generations of Home Cooking: Crafted from our family’s time-tested recipe, bringing the warmth and authenticity of traditional Indian kitchens to your meals.",
@@ -50,7 +53,7 @@ const ProductShowcase = () => {
         ],
         additionalInfo: [
             { label: "Importer Contact Information", value: "Kalsa Foods" },
-            { label: "Item Type Name", value: "Kalsa Foods Spice Mix Masala (मसाला मिश्रण), 200 gm" },
+            { label: "Item Type Name", value: "Kalsa Foods Spice Mix Masala (मसाला मिश्रण), 100 gm" },
             { label: "Manufacturer", value: "Kalsa Foods" },
             { label: "Manufacturer Contact Information", value: "Kalsa Foods" },
             { label: "Packer Contact Information", value: "Kalsa Foods" }
@@ -144,20 +147,72 @@ const ProductShowcase = () => {
                             <div className={styles.divider}></div>
 
                             <div className={styles.priceArea}>
-                                <div className={styles.discountBadge}>-25%</div>
+                                <div className={styles.discountBadge}>-50%</div>
                                 <div className={styles.priceColumn}>
                                     <span className={styles.priceSymbol}>₹</span>
-                                    <span className={styles.priceMain}>299</span>
+                                    <span className={styles.priceMain}>89</span>
                                 </div>
                             </div>
-                            <div className={styles.mrp}>M.R.P.: <span className={styles.strike}>₹399.00</span></div>
+                            <div className={styles.mrp}>M.R.P.: <span className={styles.strike}>₹179.00</span></div>
                             <p className={styles.inclusiveText}>Inclusive of all taxes</p>
+
+                            <div className={styles.offerCard}>
+                                <div className={styles.offerTitle}>
+                                    <span>🚀 Launch Offer</span>
+                                </div>
+                                <div className={styles.offerText}>
+                                    Buy 5 Packs & Get Free Delivery
+                                </div>
+                                <div className={styles.moqNotice}>
+                                    Minimum Order Quantity: 5
+                                </div>
+                            </div>
 
                             <div className={styles.divider}></div>
 
                             <div className={styles.vegBadge}>
                                 <span className={styles.vegIcon}></span>
                                 This is a <span className={styles.vegText}>{product.dietType}</span> product.
+                            </div>
+
+                            <div className={styles.qtySection}>
+                                <label htmlFor="quantity">Quantity:</label>
+                                <div className={styles.qtySelector}>
+                                    <button
+                                        onClick={() => setQuantity(Math.max(5, quantity - 1))}
+                                        className={styles.qtyBtn}
+                                        disabled={quantity <= 5}
+                                    >-</button>
+                                    <input
+                                        type="number"
+                                        id="quantity"
+                                        value={quantity}
+                                        onChange={(e) => setQuantity(Math.max(5, parseInt(e.target.value) || 5))}
+                                        className={styles.qtyInput}
+                                        min="5"
+                                    />
+                                    <button
+                                        onClick={() => setQuantity(quantity + 1)}
+                                        className={styles.qtyBtn}
+                                    >+</button>
+                                </div>
+                            </div>
+
+                            <div className={styles.ctaWrapper}>
+                                <button
+                                    className={styles.buyBtn}
+                                    onClick={() => setIsModalOpen(true)}
+                                >
+                                    Add {quantity} to Cart
+                                </button>
+                                <div className={styles.secondaryBtns}>
+                                    <button
+                                        className={styles.buyNowBtn}
+                                        onClick={() => setIsModalOpen(true)}
+                                    >
+                                        Buy Now
+                                    </button>
+                                </div>
                             </div>
 
                             <div className={styles.divider}></div>
@@ -205,23 +260,18 @@ const ProductShowcase = () => {
                                 </div>
                             </div>
 
-                            <div className={styles.ctaWrapper}>
-                                <a
-                                    href="https://www.flipkart.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={styles.buyBtn}
-                                >
-                                    Add to Cart
-                                </a>
-                                <div className={styles.secondaryBtns}>
-                                    <button className={styles.buyNowBtn}>Buy Now</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <CheckoutModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                productName={product.fullName}
+                quantity={quantity}
+                price={89}
+            />
         </section>
     );
 };
