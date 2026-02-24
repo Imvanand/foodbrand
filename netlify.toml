@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[functions]
+  node_version = "20"
+  external_node_modules = ["@google/generative-ai"]
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
