@@ -52,6 +52,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: "/favicon/ta.png",
+    shortcut: "/favicon/ta.png",
+    apple: "/favicon/ta.png",
+  },
 };
 
 import ChatWidget from "@/components/ChatWidget/ChatWidget";

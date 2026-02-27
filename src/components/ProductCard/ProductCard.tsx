@@ -23,8 +23,7 @@ const ProductCard = ({ name, price, image, weight, rating, isNew }: ProductProps
                 <Image
                     src={image}
                     alt={name}
-                    width={300}
-                    height={300}
+                    fill
                     className={styles.image}
                 />
                 <button className={styles.quickAdd}>

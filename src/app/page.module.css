@@ -108,4 +108,17 @@
   .bannerContent h2 {
     font-size: 2rem;
   }
+
+  .promoBar {
+    padding: 10px 0;
+  }
+
+  .promoLabel {
+    font-size: 1rem;
+    padding-right: 15px;
+  }
+
+  .promoContent p {
+    font-size: 0.85rem;
+  }
 }

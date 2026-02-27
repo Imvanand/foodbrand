@@ -54,7 +54,26 @@
 }
 
 @media (max-width: 768px) {
+    .wrapper {
+        padding: 20px 0;
+    }
+
     .container {
         justify-content: center;
+        gap: 15px;
+    }
+
+    .iconCircle {
+        width: 50px;
+        height: 50px;
+    }
+
+    .categoryItem {
+        min-width: 80px;
+        gap: 8px;
+    }
+
+    .categoryItem span {
+        font-size: 0.75rem;
     }
 }

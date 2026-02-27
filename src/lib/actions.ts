@@ -21,8 +21,12 @@ export async function getProductImages() {
                 && !fileName.startsWith('.');
         });
 
-        // Map to public URLs
-        return imageFiles.map(fileName => `/Product_images/${fileName}`);
+        // Map to public URLs with cache busting
+        return imageFiles.map(fileName => {
+            const filePath = path.join(imagesDirectory, fileName);
+            const stats = fs.statSync(filePath);
+            return `/Product_images/${fileName}?v=${stats.mtimeMs}`;
+        });
     } catch (error) {
         console.error("Error reading product images directory:", error);
         return [];
@@ -45,7 +49,11 @@ export async function getSliderImages() {
                 && !fileName.startsWith('.');
         });
 
-        return imageFiles.map(fileName => `/Slider/${fileName}`);
+        return imageFiles.map(fileName => {
+            const filePath = path.join(imagesDirectory, fileName);
+            const stats = fs.statSync(filePath);
+            return `/Slider/${fileName}?v=${stats.mtimeMs}`;
+        });
     } catch (error) {
         console.error("Error reading slider images directory:", error);
         return [];

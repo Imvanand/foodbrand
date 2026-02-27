@@ -76,6 +76,22 @@ const HeroSlider = () => {
                         x: { type: "spring", stiffness: 300, damping: 30 },
                         opacity: { duration: 0.2 }
                     }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={1}
+                    onDragEnd={(e, { offset, velocity }) => {
+                        const swipe = Math.abs(offset.x) * velocity.x;
+
+                        if (swipe < -10000) {
+                            slideNext();
+                        } else if (swipe > 10000) {
+                            slidePrev();
+                        } else if (offset.x > 100) {
+                            slidePrev();
+                        } else if (offset.x < -100) {
+                            slideNext();
+                        }
+                    }}
                     className={styles.slide}
                 >
                     <Image
@@ -84,7 +100,7 @@ const HeroSlider = () => {
                         fill
                         priority
                         className={styles.image}
-                        style={{ objectFit: 'cover' }}
+                        unoptimized
                     />
                 </motion.div>
             </AnimatePresence>

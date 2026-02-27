@@ -23,6 +23,8 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
     if (!isOpen) return null;
 
     const totalPrice = quantity * price;
+    const gstAmount = (totalPrice * 0.05); // Assuming 5% GST for Spices
+    const subtotal = totalPrice - gstAmount;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,7 +33,12 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
 
 *Product:* ${productName}
 *Quantity:* ${quantity} packs
-*Total Price:* ₹${totalPrice}
+
+*Order Breakdown:*
+- Subtotal: ₹${subtotal.toFixed(2)}
+- GST (5%): ₹${gstAmount.toFixed(2)}
+- Delivery: FREE
+*Total Payable: ₹${totalPrice.toFixed(2)}*
 
 *Customer Details:*
 *Name:* ${formData.name}
@@ -39,7 +46,7 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
 *Address:* ${formData.address}
 *Pincode:* ${formData.pincode}
 
-_Free Delivery Applied_ ✅`;
+_Order via WhatsApp Confirmation_ ✅`;
 
         const whatsappNumber = "918709438350";
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
@@ -71,13 +78,21 @@ _Free Delivery Applied_ ✅`;
                     </div>
                     <div className={styles.summaryRow}>
                         <span>Price per pack</span>
-                        <span>₹{price}</span>
+                        <span>₹{price.toFixed(2)}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                        <span>Subtotal (Excl. GST)</span>
+                        <span>₹{subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                        <span>GST (5%)</span>
+                        <span>₹{gstAmount.toFixed(2)}</span>
                     </div>
                     <div className={styles.totalRow}>
                         <span>Total Payable</span>
-                        <span>₹{totalPrice}</span>
+                        <span>₹{totalPrice.toFixed(2)}</span>
                     </div>
-                    <div className={styles.deliveryTag}>✅ Free Delivery Eligible</div>
+                    <div className={styles.deliveryTag}>✅ Free Delivery Applied</div>
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
