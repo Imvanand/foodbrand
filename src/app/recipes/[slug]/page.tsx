@@ -1,102 +1,100 @@
-import React from 'react';
-import { Metadata } from 'next';
+"use client";
+
+import React, { use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import styles from './RecipePage.module.css';
+import { useLanguage } from '@/context/LanguageContext';
 
 import { recipes } from '@/data/recipes';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-    const { slug } = await params;
+export default function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = use(params);
+    const { lang } = useLanguage();
+
     const recipe = recipes.find(r => r.slug === slug);
 
-    if (!recipe) return { title: 'Recipe Not Found' };
-
-    return {
-        title: `${recipe.title} Recipe`,
-        description: recipe.summary,
-        alternates: {
-            canonical: `/recipes/${slug}`,
+    const ui = {
+        en: {
+            back: "← Back to Home",
+            prep: "Prep",
+            cook: "Cook",
+            yields: "Yields",
+            difficulty: "Difficulty",
+            story: "The Story",
+            howTo: "How to Prepare",
+            ingredients: "Ingredients",
+            shopTitle: "Shop Organic Ingredients",
+            shopDesc: "Get the same pure quality used in this recipe.",
+            shopBtn: "Shop Now",
+            notFound: "Recipe Not Found",
+            backBtn: "Back to Home"
         },
-        openGraph: {
-            title: recipe.title,
-            description: recipe.summary,
-            images: [{ url: recipe.image }],
+        hi: {
+            back: "← होम पर वापस जाएं",
+            prep: "तैयारी",
+            cook: "पकने का समय",
+            yields: "कितने लोगों के लिए",
+            difficulty: "कठिनाई",
+            story: "कहानी",
+            howTo: "बनाने की विधि",
+            ingredients: "सामग्री",
+            shopTitle: "ऑर्गेनिक सामग्री खरीदें",
+            shopDesc: "वही शुद्ध क्वालिटी पाएं जो इस रेसिपी में इस्तेमाल की गई है।",
+            shopBtn: "अभी खरीदें",
+            notFound: "रेसिपी नहीं मिली",
+            backBtn: "होम पर वापस"
         }
-    };
-}
-
-export default async function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
-    const recipe = recipes.find(r => r.slug === slug);
+    }[lang];
 
     if (!recipe) {
         return (
             <main>
                 <Navbar />
                 <div className="container" style={{ padding: '100px 0', textAlign: 'center' }}>
-                    <h1>Recipe Not Found</h1>
-                    <Link href="/" className="btn btn-primary">Back to Home</Link>
+                    <h1>{ui.notFound}</h1>
+                    <Link href="/" className="btn btn-primary">{ui.backBtn}</Link>
                 </div>
                 <Footer />
             </main>
         );
     }
 
-    const recipeJsonLd = {
-        "@context": "https://schema.org",
-        "@type": "Recipe",
-        "name": recipe.title,
-        "image": recipe.image,
-        "description": recipe.summary,
-        "recipeIngredient": recipe.ingredients,
-        "recipeInstructions": recipe.steps.map(step => ({
-            "@type": "HowToStep",
-            "text": step
-        })),
-        "author": {
-            "@type": "Person",
-            "name": recipe.author
-        },
-        "datePublished": recipe.date,
-        "prepTime": `PT${recipe.prepTime.replace(' mins', 'M')}`,
-        "cookTime": `PT${recipe.cookTime.replace(' mins', 'M')}`,
-        "recipeYield": recipe.servings
-    };
+    const displayTitle = lang === 'hi' && recipe.titleHi ? recipe.titleHi : recipe.title;
+    const displayDesc = lang === 'hi' && recipe.descriptionHi ? recipe.descriptionHi : recipe.description;
+    const displayIngredients = lang === 'hi' && recipe.ingredientsHi ? recipe.ingredientsHi : recipe.ingredients;
+    const displaySteps = lang === 'hi' && recipe.stepsHi ? recipe.stepsHi : recipe.steps;
+    const displayDifficulty = lang === 'hi' && recipe.difficultyHi ? recipe.difficultyHi : recipe.difficulty;
 
     return (
         <main className={styles.main}>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(recipeJsonLd) }}
-            />
             <Navbar />
 
             <div className={styles.hero}>
                 <div className={styles.heroOverlay}></div>
                 <Image src={recipe.image} alt={recipe.title} fill className={styles.heroImage} />
                 <div className={`${styles.heroContent} container`}>
-                    <Link href="/" className={styles.backLink}>← Back to Home</Link>
+                    <Link href="/recipes" className={styles.backLink}>{ui.back}</Link>
                     <span className={styles.badge}>{recipe.author} • {recipe.date}</span>
-                    <h1>{recipe.title}</h1>
+                    <h1>{displayTitle}</h1>
                     <div className={styles.recipeMeta}>
                         <div className={styles.metaItem}>
-                            <span className={styles.label}>Prep</span>
+                            <span className={styles.label}>{ui.prep}</span>
                             <span className={styles.value}>{recipe.prepTime}</span>
                         </div>
                         <div className={styles.metaItem}>
-                            <span className={styles.label}>Cook</span>
+                            <span className={styles.label}>{ui.cook}</span>
                             <span className={styles.value}>{recipe.cookTime}</span>
                         </div>
                         <div className={styles.metaItem}>
-                            <span className={styles.label}>Yields</span>
+                            <span className={styles.label}>{ui.yields}</span>
                             <span className={styles.value}>{recipe.servings}</span>
                         </div>
                         <div className={styles.metaItem}>
-                            <span className={styles.label}>Difficulty</span>
-                            <span className={styles.value}>{recipe.difficulty}</span>
+                            <span className={styles.label}>{ui.difficulty}</span>
+                            <span className={styles.value}>{displayDifficulty}</span>
                         </div>
                     </div>
                 </div>
@@ -107,14 +105,14 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
                     <div className={styles.contentGrid}>
                         <div className={styles.mainContent}>
                             <div className={styles.description}>
-                                <h2>The Story</h2>
-                                <p>{recipe.description}</p>
+                                <h2>{ui.story}</h2>
+                                <p>{displayDesc}</p>
                             </div>
 
                             <div className={styles.instructions}>
-                                <h2>How to Prepare</h2>
+                                <h2>{ui.howTo}</h2>
                                 <div className={styles.stepList}>
-                                    {recipe.steps.map((step: string, idx: number) => (
+                                    {displaySteps.map((step: string, idx: number) => (
                                         <div key={idx} className={styles.stepItem}>
                                             <span className={styles.stepNumber}>{idx + 1}</span>
                                             <p>{step}</p>
@@ -126,9 +124,9 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
 
                         <aside className={styles.sidebar}>
                             <div className={styles.ingredientsBox}>
-                                <h3>Ingredients</h3>
+                                <h3>{ui.ingredients}</h3>
                                 <ul className={styles.ingredientList}>
-                                    {recipe.ingredients.map((ingredient: string, idx: number) => (
+                                    {displayIngredients.map((ingredient: string, idx: number) => (
                                         <li key={idx}>
                                             <span className={styles.bullet}>🌱</span>
                                             {ingredient}
@@ -138,9 +136,9 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
                             </div>
 
                             <div className={styles.promoCard}>
-                                <h4>Shop Organic Ingredients</h4>
-                                <p>Get the same pure quality used in this recipe.</p>
-                                <button className="btn btn-primary">Shop Now</button>
+                                <h4>{ui.shopTitle}</h4>
+                                <p>{ui.shopDesc}</p>
+                                <button className="btn btn-primary">{ui.shopBtn}</button>
                             </div>
                         </aside>
                     </div>

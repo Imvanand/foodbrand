@@ -93,6 +93,58 @@
     text-align: right;
 }
 
+.qrSection {
+    background: #f8f9fa;
+    border: 2px dashed #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.qrTitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f1111;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.qrContainer {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 12px;
+}
+
+.qrImage {
+    width: 150px;
+    height: 150px;
+    display: block;
+}
+
+.qrMeta {
+    font-size: 0.8rem;
+    color: #565959;
+    line-height: 1.4;
+}
+
+.upiId {
+    display: block;
+    font-family: monospace;
+    color: #000;
+    font-weight: 600;
+    margin-top: 5px;
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
 .form {
     display: flex;
     flex-direction: column;

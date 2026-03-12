@@ -104,6 +104,12 @@
     font-size: 0.95rem;
 }
 
+.gstinLabel {
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+}
+
 .bottomBar {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 30px 0;

@@ -1,3 +1,5 @@
+"use client";
+
 import Navbar from "@/components/Navbar/Navbar";
 import HeroSlider from "@/components/HeroSlider/HeroSlider";
 import CategoryBar from "@/components/CategoryBar/CategoryBar";
@@ -6,8 +8,56 @@ import RecipesSection from "@/components/RecipesSection/RecipesSection";
 import BulkOrder from "@/components/BulkOrder/BulkOrder";
 import Footer from "@/components/Footer/Footer";
 import styles from "./page.module.css";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Home() {
+  const { lang } = useLanguage();
+
+  const t = {
+    en: {
+      promoLabel: "Bulk Order",
+      promoText: "Planning a Bulk Order? | Online Inquiry",
+      values: [
+        {
+          icon: "🌱",
+          title: "Ethically Sourced",
+          desc: "We work directly with small-scale farmers ensuring fair trade practices."
+        },
+        {
+          icon: "🚜",
+          title: "100% Organic",
+          desc: "Everything we offer is certified organic and free from harmful pesticides."
+        },
+        {
+          icon: "📦",
+          title: "Sustainable Packing",
+          desc: "Our packaging is designed to be eco-friendly and minimize plastic waste."
+        }
+      ]
+    },
+    hi: {
+      promoLabel: "बल्क ऑर्डर",
+      promoText: "बल्क ऑर्डर की योजना बना रहे हैं? | ऑनलाइन पूछताछ",
+      values: [
+        {
+          icon: "🌱",
+          title: "नैतिक रूप से प्राप्त",
+          desc: "हम उचित व्यापार प्रथाओं को सुनिश्चित करने के लिए सीधे छोटे किसानों के साथ काम करते हैं।"
+        },
+        {
+          icon: "🚜",
+          title: "100% ऑर्गेनिक",
+          desc: "हम जो कुछ भी पेश करते हैं वह प्रमाणित ऑर्गेनिक है और हानिकारक कीटनाशकों से मुक्त है।"
+        },
+        {
+          icon: "📦",
+          title: "टिकाऊ पैकेजिंग",
+          desc: "हमारी पैकेजिंग पर्यावरण के अनुकूल होने और प्लास्टिक कचरे को कम करने के लिए डिज़ाइन की गई है।"
+        }
+      ]
+    }
+  }[lang];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -86,8 +136,8 @@ export default function Home() {
       <div className={styles.promoBar}>
         <div className="container">
           <div className={styles.promoContent}>
-            <span className={styles.promoLabel}>Bulk Order</span>
-            <p><a href="#bulk-order" style={{ textDecoration: 'underline' }}>Planning a Bulk Order? | Online Inquiry</a></p>
+            <span className={styles.promoLabel}>{t.promoLabel}</span>
+            <p><a href="#bulk-order" style={{ textDecoration: 'underline' }}>{t.promoText}</a></p>
           </div>
         </div>
       </div>
@@ -99,21 +149,13 @@ export default function Home() {
       <section className={styles.values}>
         <div className="container">
           <div className={styles.valuesGrid}>
-            <div className={styles.valueItem}>
-              <div className={styles.valueIcon}>🌱</div>
-              <h3>Ethically Sourced</h3>
-              <p>We work directly with small-scale farmers ensuring fair trade practices.</p>
-            </div>
-            <div className={styles.valueItem}>
-              <div className={styles.valueIcon}>🚜</div>
-              <h3>100% Organic</h3>
-              <p>Everything we offer is certified organic and free from harmful pesticides.</p>
-            </div>
-            <div className={styles.valueItem}>
-              <div className={styles.valueIcon}>📦</div>
-              <h3>Sustainable Packing</h3>
-              <p>Our packaging is designed to be eco-friendly and minimize plastic waste.</p>
-            </div>
+            {t.values.map((val, idx) => (
+              <div key={idx} className={styles.valueItem}>
+                <div className={styles.valueIcon}>{val.icon}</div>
+                <h3>{val.title}</h3>
+                <p>{val.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

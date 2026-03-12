@@ -60,6 +60,7 @@ export const metadata: Metadata = {
 };
 
 import ChatWidget from "@/components/ChatWidget/ChatWidget";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export default function RootLayout({
   children,
@@ -69,8 +70,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${outfit.variable} ${playfair.variable}`}>
-        {children}
-        <ChatWidget />
+        <LanguageProvider>
+          {children}
+          <ChatWidget />
+        </LanguageProvider>
       </body>
     </html>
   );

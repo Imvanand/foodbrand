@@ -5,7 +5,8 @@ import styles from './AnnouncementBar.module.css';
 import { ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
 
 const announcements = [
-    "🚀 Launch Offer: Flat 50% OFF | Limited Time Only",
+    "🚀 Launch Offer: Flat 40% OFF | Limited Time Only",
+    "🚚 Free Delivery on orders of 3 or more packs!",
     "Inspired by Home-Cooked Traditions",
     "One Masala. Multiple Dishes. Endless Flavor.",
     "No Added Colors | Pure & Authentic Taste"

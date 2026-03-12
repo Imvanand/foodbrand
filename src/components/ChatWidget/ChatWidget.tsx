@@ -96,18 +96,6 @@ const ChatWidget = () => {
                             {messages.length === 0 && (
                                 <div className={styles.welcome}>
                                     <p>Namaste! I'm Kalsa Bot. How can I help you cook something delicious today?</p>
-                                    <div className={styles.quickActionsGrid}>
-                                        {quickActions.map((action, i) => (
-                                            <button
-                                                key={i}
-                                                className={styles.actionBtn}
-                                                onClick={() => handleSend(action.prompt)}
-                                            >
-                                                {action.icon}
-                                                <span>{action.label}</span>
-                                            </button>
-                                        ))}
-                                    </div>
                                 </div>
                             )}
 
@@ -131,6 +119,19 @@ const ChatWidget = () => {
 
                         {/* Input Area */}
                         <div className={styles.inputArea}>
+                            <div className={styles.quickActionsGrid}>
+                                {quickActions.map((action, i) => (
+                                    <button
+                                        key={i}
+                                        className={styles.actionBtn}
+                                        onClick={() => handleSend(action.prompt)}
+                                    >
+                                        {action.icon}
+                                        <span>{action.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+
                             <div className={styles.inputWrapper}>
                                 <input
                                     type="text"

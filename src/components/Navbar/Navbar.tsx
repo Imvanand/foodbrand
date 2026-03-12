@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image'; // Added Image import
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X, Languages } from 'lucide-react';
 import styles from './Navbar.module.css';
 import AnnouncementBar from '../AnnouncementBar/AnnouncementBar';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { lang, setLang } = useLanguage();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -25,18 +27,19 @@ const Navbar = () => {
     }, []);
 
     const navItems = [
-        { title: "Home", href: "/", hasDropdown: false },
-        { title: "Our Product", href: "/#our-product", hasDropdown: false },
-        { title: "Recipes", href: "/recipes", hasDropdown: false },
-        { title: "What's the Story", href: "/our-story", hasDropdown: false },
+        { title: lang === 'hi' ? "होम" : "Home", href: "/", hasDropdown: false },
+        { title: lang === 'hi' ? "प्रोडक्ट्स" : "Our Product", href: "/#our-product", hasDropdown: false },
+        { title: lang === 'hi' ? "रेसिपे" : "Recipes", href: "/recipes", hasDropdown: false },
+        { title: lang === 'hi' ? "ऑर्डर कैसे करें" : "How to Order", href: "/how-to-order", hasDropdown: false },
+        { title: lang === 'hi' ? "हमारी कहानी" : "What's the Story", href: "/our-story", hasDropdown: false },
         {
-            title: "Contact us",
+            title: lang === 'hi' ? "संपर्क करें" : "Contact us",
             href: "#",
             hasDropdown: true,
             dropdownItems: [
-                { title: "Contact", href: "/contact" },
-                { title: "Bulk Orders", href: "/contact#bulk-order" },
-                { title: "Feedback & Complains", href: "/feedback" }
+                { title: lang === 'hi' ? "संपर्क" : "Contact", href: "/contact" },
+                { title: lang === 'hi' ? "बल्क ऑर्डर" : "Bulk Orders", href: "/contact#bulk-order" },
+                { title: lang === 'hi' ? "फीडबैक" : "Feedback & Complains", href: "/feedback" }
             ]
         },
     ];
@@ -83,6 +86,21 @@ const Navbar = () => {
                             </li>
                         ))}
                     </ul>
+
+                    <div className={styles.langSwitcher}>
+                        <button
+                            className={`${styles.langBtn} ${lang === 'en' ? styles.activeLang : ''}`}
+                            onClick={() => setLang('en')}
+                        >
+                            EN
+                        </button>
+                        <button
+                            className={`${styles.langBtn} ${lang === 'hi' ? styles.activeLang : ''}`}
+                            onClick={() => setLang('hi')}
+                        >
+                            हिं
+                        </button>
+                    </div>
 
                     {/* <div className={styles.actions}>
                         <button className={styles.iconBtn} aria-label="Search">
@@ -135,6 +153,21 @@ const Navbar = () => {
                         </li>
                     ))}
                 </ul>
+
+                <div className={styles.mobileLangSwitcher}>
+                    <button
+                        className={`${styles.langBtn} ${lang === 'en' ? styles.activeLang : ''}`}
+                        onClick={() => setLang('en')}
+                    >
+                        English (EN)
+                    </button>
+                    <button
+                        className={`${styles.langBtn} ${lang === 'hi' ? styles.activeLang : ''}`}
+                        onClick={() => setLang('hi')}
+                    >
+                        हिन्दी (HI)
+                    </button>
+                </div>
             </div>
         </header>
     );

@@ -222,3 +222,68 @@
         display: block;
     }
 }
+
+.langSwitcher {
+    display: flex;
+    background: #f5f7f6;
+    border-radius: 50px;
+    padding: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.langBtn {
+    padding: 6px 15px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.activeLang {
+    background: var(--primary);
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(34, 75, 51, 0.2);
+}
+
+/* Add some space in mobile header for the switcher */
+@media (max-width: 900px) {
+    .langSwitcher {
+        margin-left: 10px;
+        order: 2;
+    }
+
+    .logo {
+        order: 1;
+    }
+
+    .mobileToggle {
+        order: 0;
+    }
+}
+
+.mobileLangSwitcher {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 30px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.mobileLangSwitcher .langBtn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.mobileLangSwitcher .activeLang {
+    background: var(--primary);
+    color: white !important;
+}

@@ -6,14 +6,17 @@ import styles from './ProductShowcase.module.css';
 import { getProductImages } from '@/lib/actions';
 import CheckoutModal from '../CheckoutModal/CheckoutModal';
 
+import { useLanguage } from '@/context/LanguageContext';
+
 const ProductShowcase = () => {
+    const { lang } = useLanguage();
     const [productImages, setProductImages] = useState<string[]>([]);
     const [activeImage, setActiveImage] = useState<string | null>(null);
     const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
     const [isZooming, setIsZooming] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = useState(false);
-    const [quantity, setQuantity] = useState(5);
+    const [quantity, setQuantity] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -28,37 +31,90 @@ const ProductShowcase = () => {
         fetchImages();
     }, []);
 
-    const product = {
-        name: "Kalsa foods 100% Natural Spice Mix Masala Powder 100gm",
-        fullName: "Spice Mix Masala | All-Purpose Indian Spice Blend | For Sabzi, Paneer & Curry | Rich Aroma & Authentic Taste | No Added Colors | 100g",
-        tagline: "Experience the true taste of homemade goodness",
-        price: "₹89",
-        originalPrice: "₹179",
-        dietType: "Vegetarian",
-        aboutItems: [
-            "Inspired by Generations of Home Cooking: Crafted from our family’s time-tested recipe, bringing the warmth and authenticity of traditional Indian kitchens to your meals.",
-            "One Masala, Multiple Dishes: Perfect all-purpose blend for sabzi, curry, paneer, chicken, egg, and everyday recipes.",
-            "Rich Aroma & Balanced Flavor: Expertly blended spices deliver a soulful fragrance, vibrant color, and perfectly balanced taste in every bite.",
-            "Premium Quality Whole Spices: Made from carefully selected, high-quality spices to ensure purity, freshness, and consistency.",
-            "No Artificial Colors or Preservatives: Free from added colors and harmful preservatives – just pure, authentic spice goodness.",
-            "Elevates Everyday Cooking: Transforms simple ingredients into flavorful, restaurant-style dishes at home."
-        ],
-        specifications: [
-            { label: "Brand Name", value: "Kalsa Foods" },
-            { label: "Item Form", value: "Powder" },
-            { label: "Diet Type", value: "Vegetarian" },
-            { label: "Specialty", value: "Natural" },
-            { label: "Container Type", value: "Standup pouch" },
-            { label: "Country of Origin", value: "India" }
-        ],
-        additionalInfo: [
-            { label: "Importer Contact Information", value: "Kalsa Foods" },
-            { label: "Item Type Name", value: "Kalsa Foods Spice Mix Masala (मसाला मिश्रण), 100 gm" },
-            { label: "Manufacturer", value: "Kalsa Foods" },
-            { label: "Manufacturer Contact Information", value: "Kalsa Foods" },
-            { label: "Packer Contact Information", value: "Kalsa Foods" }
-        ]
+    const content = {
+        en: {
+            breadcrumb: "Kalsa Foods > Spices & Masalas",
+            name: "Kalsa foods 100% Natural Spice Mix Masala Powder 100gm",
+            fullName: "Spice Mix Masala | All-Purpose Indian Spice Blend | For Sabzi, Paneer & Curry | Rich Aroma & Authentic Taste | No Added Colors | 100g",
+            tagline: "Experience the true taste of homemade goodness",
+            aboutTitle: "About this item",
+            vegText: "Vegetarian",
+            qtyLabel: "Quantity:",
+            addBtn: `Add ${quantity} to Cart`,
+            buyNowBtn: "Buy Now",
+            infoTitle: "Product information",
+            specTitle: "Specifications",
+            additionalTitle: "Additional Information",
+            offerTitle: "🚀 Launch Offer",
+            offerText: "Buy 3 or more Packs & Get Free Delivery (₹60 charge for 1-2 packs)",
+            moqNotice: "Special Offer: 3+ Packs for Free Delivery",
+            aboutItems: [
+                "Inspired by Generations of Home Cooking: Crafted from our family’s time-tested recipe, bringing the warmth and authenticity of traditional Indian kitchens to your meals.",
+                "One Masala, Multiple Dishes: Perfect all-purpose blend for sabzi, curry, paneer, chicken, egg, and everyday recipes.",
+                "Rich Aroma & Balanced Flavor: Expertly blended spices deliver a soulful fragrance, vibrant color, and perfectly balanced taste in every bite.",
+                "Premium Quality Whole Spices: Made from carefully selected, high-quality spices to ensure purity, freshness, and consistency.",
+                "No Artificial Colors or Preservatives: Free from added colors and harmful preservatives – just pure, authentic spice goodness.",
+                "Elevates Everyday Cooking: Transforms simple ingredients into flavorful, restaurant-style dishes at home."
+            ],
+            specifications: [
+                { label: "Brand Name", value: "Kalsa Foods" },
+                { label: "Item Form", value: "Powder" },
+                { label: "Diet Type", value: "Vegetarian" },
+                { label: "Specialty", value: "Natural" },
+                { label: "Container Type", value: "Standup pouch" },
+                { label: "Country of Origin", value: "India" }
+            ],
+            additionalInfo: [
+                { label: "Importer Contact Information", value: "Kalsa Foods" },
+                { label: "Item Type Name", value: "Kalsa Foods Spice Mix Masala (मसाला मिश्रण), 100 gm" },
+                { label: "Manufacturer", value: "Kalsa Foods" },
+                { label: "Manufacturer Contact Information", value: "Kalsa Foods" },
+                { label: "Packer Contact Information", value: "Kalsa Foods" }
+            ]
+        },
+        hi: {
+            breadcrumb: "कालसा फूड्स > मसाले",
+            name: "कालसा फूड्स 100% प्राकृतिक स्पाइस मिक्स मसाला पाउडर 100 ग्राम",
+            fullName: "स्पाइस मिक्स मसाला | सर्व-उद्देशीय भारतीय मसाला मिश्रण | सब्जी, पनीर और करी के लिए | भरपूर सुगंध और असली स्वाद | कोई अतिरिक्त रंग नहीं | 100ग्राम",
+            tagline: "घर के बने खाने के असली स्वाद का अनुभव करें",
+            aboutTitle: "इस आइटम के बारे में",
+            vegText: "शाकाहारी",
+            qtyLabel: "मात्रा:",
+            addBtn: `कार्ट में ${quantity} जोड़ें`,
+            buyNowBtn: "अभी खरीदें",
+            infoTitle: "उत्पाद की जानकारी",
+            specTitle: "विशेष विवरण",
+            additionalTitle: "अतिरिक्त जानकारी",
+            offerTitle: "🚀 लॉन्च ऑफर",
+            offerText: "3 या अधिक पैक खरीदें और मुफ्त डिलीवरी पाएं (1-2 पैक पर ₹60 चार्ज)",
+            moqNotice: "विशेष ऑफर: 3+ पैक पर मुफ्त डिलीवरी",
+            aboutItems: [
+                "पीढ़ियों की घर की कुकिंग से प्रेरित: हमारे परिवार के समय की कसौटी पर खरी उतरी रेसिपी से तैयार, जो आपके भोजन में पारंपरिक भारतीय रसोई की गर्माहट और प्रामाणिकता लाती है।",
+                "एक मसाला, कई व्यंजन: सब्जी, करी, पनीर, चिकन, अंडे और रोजमर्रा की रेसिपी के लिए एकदम सही सर्व-उद्देशीय मिश्रण।",
+                "भरपूर सुगंध और संतुलित स्वाद: कुशलता से मिश्रित मसाले हर निवाले में एक रूहानी खुशबू, जीवंत रंग और पूरी तरह से संतुलित स्वाद देते हैं।",
+                "प्रीमियम गुणवत्ता वाले खड़े मसाले: शुद्धता, ताजगी और निरंतरता सुनिश्चित करने के लिए सावधानीपूर्वक चुने गए, उच्च गुणवत्ता वाले मसालों से बने।",
+                "कोई कृत्रिम रंग या संरक्षक नहीं: अतिरिक्त रंगों और हानिकारक संरक्षकों से मुक्त - बस शुद्ध, असली मसालों की अच्छाई।",
+                "रोजमर्रा की कुकिंग को बेहतर बनाता है: घर पर ही साधारण सामग्री को स्वादिष्ट, रेस्टोरेंट जैसे व्यंजनों में बदल देता है।"
+            ],
+            specifications: [
+                { label: "ब्रांड का नाम", value: "कालसा फूड्स" },
+                { label: "आइटम फॉर्म", value: "पाउडर" },
+                { label: "आहार प्रकार", value: "शाकाहारी" },
+                { label: "विशेषता", value: "प्राकृतिक" },
+                { label: "कंटेनर प्रकार", value: "स्टैंडअप पाउच" },
+                { label: "उत्पत्ति का देश", value: "भारत" }
+            ],
+            additionalInfo: [
+                { label: "आयातक संपर्क जानकारी", value: "कालसा फूड्स" },
+                { label: "आइटम प्रकार का नाम", value: "कालसा फूड्स स्पाइस मिक्स मसाला, 100 ग्राम" },
+                { label: "निर्माता", value: "कालसा फूड्स" },
+                { label: "निर्माता संपर्क जानकारी", value: "कालसा फूड्स" },
+                { label: "पैकर संपर्क जानकारी", value: "कालसा फूड्स" }
+            ]
+        }
     };
+
+    const t = content[lang];
 
     const handleMouseMove = (e: MouseEvent) => {
         if (!containerRef.current) return;
@@ -110,7 +166,7 @@ const ProductShowcase = () => {
                             >
                                 <Image
                                     src={activeImage}
-                                    alt={product.name}
+                                    alt={t.name}
                                     fill
                                     className={styles.mainImage}
                                     priority
@@ -141,17 +197,17 @@ const ProductShowcase = () => {
 
                         {/* Details Section */}
                         <div className={styles.details}>
-                            <div className={styles.breadcrumb}>Kalsa Foods &gt; Spices & Masalas</div>
-                            <h1 className={styles.title}>{product.fullName}</h1>
+                            <div className={styles.breadcrumb}>{t.breadcrumb}</div>
+                            <h1 className={styles.title}>{t.fullName}</h1>
                             <div className={styles.brandLink}>Visit the Kalsa Foods Store</div>
 
                             <div className={styles.divider}></div>
 
                             <div className={styles.priceArea}>
-                                <div className={styles.discountBadge}>-50%</div>
+                                <div className={styles.discountBadge}>-40%</div>
                                 <div className={styles.priceColumn}>
                                     <span className={styles.priceSymbol}>₹</span>
-                                    <span className={styles.priceMain}>89</span>
+                                    <span className={styles.priceMain}>107</span>
                                 </div>
                             </div>
                             <div className={styles.mrp}>M.R.P.: <span className={styles.strike}>₹179.00</span></div>
@@ -159,13 +215,13 @@ const ProductShowcase = () => {
 
                             <div className={styles.offerCard}>
                                 <div className={styles.offerTitle}>
-                                    <span>🚀 Launch Offer</span>
+                                    <span>{t.offerTitle}</span>
                                 </div>
                                 <div className={styles.offerText}>
-                                    Buy 5 Packs & Get Free Delivery
+                                    {t.offerText}
                                 </div>
                                 <div className={styles.moqNotice}>
-                                    Minimum Order Quantity: 5
+                                    {t.moqNotice}
                                 </div>
                             </div>
 
@@ -173,24 +229,24 @@ const ProductShowcase = () => {
 
                             <div className={styles.vegBadge}>
                                 <span className={styles.vegIcon}></span>
-                                This is a <span className={styles.vegText}>{product.dietType}</span> product.
+                                This is a <span className={styles.vegText}>{t.vegText}</span> product.
                             </div>
 
                             <div className={styles.qtySection}>
-                                <label htmlFor="quantity">Quantity:</label>
+                                <label htmlFor="quantity">{t.qtyLabel}</label>
                                 <div className={styles.qtySelector}>
                                     <button
-                                        onClick={() => setQuantity(Math.max(5, quantity - 1))}
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                         className={styles.qtyBtn}
-                                        disabled={quantity <= 5}
+                                        disabled={quantity <= 1}
                                     >-</button>
                                     <input
                                         type="number"
                                         id="quantity"
                                         value={quantity}
-                                        onChange={(e) => setQuantity(Math.max(5, parseInt(e.target.value) || 5))}
+                                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                                         className={styles.qtyInput}
-                                        min="5"
+                                        min="1"
                                     />
                                     <button
                                         onClick={() => setQuantity(quantity + 1)}
@@ -204,14 +260,14 @@ const ProductShowcase = () => {
                                     className={styles.buyBtn}
                                     onClick={() => setIsModalOpen(true)}
                                 >
-                                    Add {quantity} to Cart
+                                    {t.addBtn}
                                 </button>
                                 <div className={styles.secondaryBtns}>
                                     <button
                                         className={styles.buyNowBtn}
                                         onClick={() => setIsModalOpen(true)}
                                     >
-                                        Buy Now
+                                        {t.buyNowBtn}
                                     </button>
                                 </div>
                             </div>
@@ -219,9 +275,9 @@ const ProductShowcase = () => {
                             <div className={styles.divider}></div>
 
                             <div className={styles.aboutSection}>
-                                <h2>About this item</h2>
+                                <h2>{t.aboutTitle}</h2>
                                 <ul className={styles.aboutList}>
-                                    {product.aboutItems.map((item, idx) => {
+                                    {t.aboutItems.map((item: string, idx: number) => {
                                         const parts = item.split(':');
                                         if (parts.length > 1) {
                                             return (
@@ -238,11 +294,11 @@ const ProductShowcase = () => {
                             <div className={styles.divider}></div>
 
                             <div className={styles.technicalSection}>
-                                <h2>Product information</h2>
+                                <h2>{t.infoTitle}</h2>
                                 <div className={styles.techGrid}>
                                     <div className={styles.techColumn}>
-                                        <h3>Specifications</h3>
-                                        {product.specifications.map((spec, idx) => (
+                                        <h3>{t.specTitle}</h3>
+                                        {t.specifications.map((spec: any, idx: number) => (
                                             <div key={idx} className={styles.techRow}>
                                                 <span className={styles.label}>{spec.label}</span>
                                                 <span className={styles.value}>{spec.value}</span>
@@ -250,8 +306,8 @@ const ProductShowcase = () => {
                                         ))}
                                     </div>
                                     <div className={styles.techColumn}>
-                                        <h3>Additional Information</h3>
-                                        {product.additionalInfo.map((info, idx) => (
+                                        <h3>{t.additionalTitle}</h3>
+                                        {t.additionalInfo.map((info: any, idx: number) => (
                                             <div key={idx} className={styles.techRow}>
                                                 <span className={styles.label}>{info.label}</span>
                                                 <span className={styles.value}>{info.value}</span>
@@ -269,9 +325,9 @@ const ProductShowcase = () => {
             <CheckoutModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                productName={product.fullName}
+                productName={t.fullName}
                 quantity={quantity}
-                price={89}
+                price={107}
             />
         </section>
     );
