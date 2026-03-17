@@ -86,10 +86,6 @@ const Footer = () => {
                         <span>{t.address}</span>
                     </div>
                     <div className={styles.contactItem}>
-                        <Phone size={18} />
-                        <span>+91 87094 38350</span>
-                    </div>
-                    <div className={styles.contactItem}>
                         <Mail size={18} />
                         <span>support@kalsafoods.com</span>
                     </div>

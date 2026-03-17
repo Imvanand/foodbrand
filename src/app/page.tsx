@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import HeroSlider from "@/components/HeroSlider/HeroSlider";
 import CategoryBar from "@/components/CategoryBar/CategoryBar";
 import ProductShowcase from "@/components/ProductShowcase/ProductShowcase";
+import AvailableOnAmazon from "@/components/AvailableOnAmazon/AvailableOnAmazon";
 import RecipesSection from "@/components/RecipesSection/RecipesSection";
 import BulkOrder from "@/components/BulkOrder/BulkOrder";
 import Footer from "@/components/Footer/Footer";
@@ -161,6 +162,7 @@ export default function Home() {
       </section>
 
       <RecipesSection />
+      <AvailableOnAmazon />
       <BulkOrder />
       <Footer />
     </main>

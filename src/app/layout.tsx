@@ -23,9 +23,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Kalsa Foods" }],
   creator: "Kalsa Foods",
   publisher: "Kalsa Foods",
-  alternates: {
-    canonical: '/',
-  },
+
   openGraph: {
     type: "website",
     locale: "en_IN",

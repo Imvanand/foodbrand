@@ -75,10 +75,6 @@ const BulkOrder = () => {
                             viewport={{ once: true }}
                             transition={{ delay: 0.6 }}
                         >
-                            <a href="tel:+918709438350" className={styles.callBtn}>
-                                <Phone size={20} />
-                                <span>{t.callBtn}</span>
-                            </a>
                             <Link href="/contact" className={styles.inquiryBtn}>
                                 <span>{t.inquiryBtn}</span>
                                 <ArrowRight size={18} />

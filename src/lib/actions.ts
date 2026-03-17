@@ -19,7 +19,11 @@ export async function getProductImages() {
             const ext = path.extname(fileName).toLowerCase();
             return (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.webp' || ext === '.svg')
                 && !fileName.startsWith('.');
+        }).sort((a, b) => {
+            return a.localeCompare(b, undefined, { numeric: true });
         });
+
+
 
         // Map to public URLs with cache busting
         return imageFiles.map(fileName => {

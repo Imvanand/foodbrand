@@ -5,6 +5,7 @@ import Image from 'next/image';
 import styles from './ProductShowcase.module.css';
 import { getProductImages } from '@/lib/actions';
 import CheckoutModal from '../CheckoutModal/CheckoutModal';
+import { Share2 } from 'lucide-react';
 
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -136,6 +137,45 @@ const ProductShowcase = () => {
         setZoomPos({ x: boundedX, y: boundedY });
     };
 
+    const handleShare = async () => {
+        try {
+            let filesArray: File[] = [];
+            
+            // Try to generate a File object from the active image to share
+            if (activeImage) {
+                try {
+                    const response = await fetch(activeImage);
+                    const blob = await response.blob();
+                    const file = new File([blob], "product.png", { type: blob.type || 'image/png' });
+                    filesArray = [file];
+                } catch (e) {
+                    console.log("Error fetching image for share", e);
+                }
+            }
+
+            const shareData: ShareData = {
+                title: t.fullName,
+                text: `${t.fullName}\n${t.tagline}`,
+                url: window.location.href,
+            };
+
+            // If browser supports file sharing, attach the image
+            if (filesArray.length > 0 && navigator.canShare && navigator.canShare({ files: filesArray })) {
+                shareData.files = filesArray;
+            }
+
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                // Fallback for browsers that don't support native share
+                await navigator.clipboard.writeText(`${t.fullName}\n${window.location.href}`);
+                alert("Product link copied to clipboard!");
+            }
+        } catch (err) {
+            console.log('Error sharing', err);
+        }
+    };
+
     if (!mounted || productImages.length === 0 || !activeImage) return null;
 
     return (
@@ -198,16 +238,21 @@ const ProductShowcase = () => {
                         {/* Details Section */}
                         <div className={styles.details}>
                             <div className={styles.breadcrumb}>{t.breadcrumb}</div>
-                            <h1 className={styles.title}>{t.fullName}</h1>
-                            <div className={styles.brandLink}>Visit the Kalsa Foods Store</div>
+                            <div className={styles.titleWrapper}>
+                                <h1 className={styles.title}>{t.fullName}</h1>
+                                <button onClick={handleShare} className={styles.shareBtn} aria-label="Share">
+                                    <Share2 size={24} />
+                                </button>
+                            </div>
 
                             <div className={styles.divider}></div>
 
                             <div className={styles.priceArea}>
-                                <div className={styles.discountBadge}>-40%</div>
+                                <div className={styles.discountBadge}>-22%</div>
                                 <div className={styles.priceColumn}>
                                     <span className={styles.priceSymbol}>₹</span>
-                                    <span className={styles.priceMain}>107</span>
+                                    <span className={styles.priceMain}>139</span>
+                                    <span className={styles.pricePerUnit}>(₹139 /100 g)</span>
                                 </div>
                             </div>
                             <div className={styles.mrp}>M.R.P.: <span className={styles.strike}>₹179.00</span></div>
@@ -327,7 +372,7 @@ const ProductShowcase = () => {
                 onClose={() => setIsModalOpen(false)}
                 productName={t.fullName}
                 quantity={quantity}
-                price={107}
+                price={139}
             />
         </section>
     );

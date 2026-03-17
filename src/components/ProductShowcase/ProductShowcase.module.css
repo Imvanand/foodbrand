@@ -136,6 +136,33 @@
     margin-bottom: 5px;
 }
 
+.titleWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+.shareBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #565959;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shareBtn:hover {
+    background: #f3f3f3;
+    color: var(--accent, #c45500);
+    transform: scale(1.1);
+}
+
 .divider {
     height: 1px;
     background: #e7e7e7;
@@ -144,30 +171,42 @@
 
 .priceArea {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 5px;
 }
 
 .discountBadge {
     color: #CC0C39;
-    font-size: 1.7rem;
+    font-size: 2rem;
     font-weight: 300;
 }
 
 .priceColumn {
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
 }
 
 .priceSymbol {
-    font-size: 0.8rem;
-    margin-top: 8px;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
     margin-right: 2px;
+    font-weight: 500;
 }
 
 .priceMain {
-    font-size: 1.8rem;
-    font-weight: 500;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #0f1111;
+    line-height: 1;
+}
+
+.pricePerUnit {
+    font-size: 0.9rem;
+    color: #565959;
+    margin-bottom: 4px;
+    margin-left: 2px;
 }
 
 .mrp {
@@ -579,21 +618,15 @@
     }
 
     .priceArea {
-        margin: 20px 0;
+        margin: 15px 0;
     }
 
     .priceMain {
-        font-size: 2rem;
-        color: var(--primary);
+        font-size: 2.2rem;
     }
 
     .discountBadge {
-        background: var(--primary);
-        color: #fff;
-        font-size: 0.8rem;
-        padding: 4px 12px;
-        border-radius: 50px;
-        font-weight: 600;
+        font-size: 1.8rem;
     }
 
     .offerCard {
