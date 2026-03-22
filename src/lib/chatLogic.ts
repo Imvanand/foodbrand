@@ -22,7 +22,7 @@ const knowledgeBase: ChatResponse[] = [
     },
     {
         keywords: ['whatsapp', 'number', 'phone', 'contact', 'call', 'support'],
-        response: "You can reach us on WhatsApp at +91 87094 38350 or email us at support@kalsafoods.com. We are based in Bangalore (560049)."
+        response: "You can reach us on WhatsApp or email us at support@kalsafoods.com. We are based in Bangalore (560049)."
     },
     {
         keywords: ['potatoes and cauliflower', 'aloo gobhi', 'aloo gobi'],
@@ -42,7 +42,7 @@ const knowledgeBase: ChatResponse[] = [
     },
     {
         keywords: ['bulk', 'wholesale', 'business', 'large quantity', 'restaurant'],
-        response: "For bulk orders or business inquiries, please use our Inquiry Form on the Contact page or call us directly at +91 87094 38350. we offer special pricing for restaurants and retail shops."
+        response: "For bulk orders or business inquiries, please use our Inquiry Form on the Contact page. We offer special pricing for restaurants and retail shops."
     },
     {
         keywords: ['natural', 'pure', 'color', 'quality', 'ingredients'],
@@ -75,5 +75,5 @@ export const getLocalResponse = (input: string): string => {
     }
 
     // Default fallback
-    return "I'm sorry, I'm still learning! Could you please ask about our product price, recipes, or how to order? You can also contact us on WhatsApp at +91 87094 38350.";
+    return "I'm sorry, I'm still learning! Could you please ask about our product price, recipes, or how to order?";
 };

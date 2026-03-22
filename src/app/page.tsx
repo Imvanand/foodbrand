@@ -92,7 +92,6 @@ export default function Home() {
     "image": "https://kalsafoods.com/logo/logo.png",
     "@id": "https://kalsafoods.com",
     "url": "https://kalsafoods.com",
-    "telephone": "+918709438350",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "K R Puram",

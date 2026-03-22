@@ -16,7 +16,6 @@ const BulkOrder = () => {
             badge: "Wholesale & Business",
             title: "Planning a Bulk Order?",
             desc: "Whether it's for a restaurant, retail shop, or a special event, we offer specialized pricing and priority logistics for large quantity orders. Get in touch with our team directly for a custom quote.",
-            callBtn: "Call Directly: +91 87094 38350",
             inquiryBtn: "Online Inquiry",
             stat1: "Organic Certified",
             stat2: "Delivery"
@@ -25,7 +24,6 @@ const BulkOrder = () => {
             badge: "थोक और व्यापार",
             title: "बल्क ऑर्डर की योजना बना रहे हैं?",
             desc: "चाहे वह रेस्टोरेंट, रिटेल शॉप या किसी विशेष कार्यक्रम के लिए हो, हम बड़ी मात्रा में ऑर्डर के लिए विशेष मूल्य निर्धारण और प्राथमिकता रसद प्रदान करते हैं। कस्टम कोट के लिए सीधे हमारी टीम से संपर्क करें।",
-            callBtn: "सीधे कॉल करें: +91 87094 38350",
             inquiryBtn: "ऑनलाइन पूछताछ",
             stat1: "प्रमाणित ऑर्गेनिक",
             stat2: "डिलिवरी"

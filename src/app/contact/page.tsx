@@ -102,16 +102,7 @@ export default function Contact() {
                                 </div>
                             </div>
 
-                            <div className={styles.infoItem}>
-                                <div className={styles.iconWrapper}>
-                                    <Phone size={22} />
-                                </div>
-                                <div className={styles.infoContent}>
-                                    <h4>Call Us</h4>
-                                    <p>+91 87094 38350</p>
-                                    <p>Mon-Sat, 9am - 6pm</p>
-                                </div>
-                            </div>
+
                         </div>
 
                         <div className={styles.socials}>
@@ -155,7 +146,7 @@ export default function Contact() {
                                         value={formData.phone}
                                         onChange={handleChange}
                                         className={styles.input}
-                                        placeholder="+91 87094 38350"
+                                        placeholder="+91 98765 43210"
                                     />
                                 </div>
 

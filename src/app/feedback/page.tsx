@@ -155,7 +155,7 @@ export default function Feedback() {
                                     value={formData.phone}
                                     onChange={handleChange}
                                     className={styles.input}
-                                    placeholder="+91 87094 38350"
+                                    placeholder="+91 98765 43210"
                                 />
                             </div>
 
