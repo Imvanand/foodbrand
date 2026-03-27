@@ -28,6 +28,48 @@
   font-size: 1rem;
 }
 
+.quickTracker {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.trackerWrapper {
+  display: flex;
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid #ddd;
+}
+
+.trackerWrapper input {
+  flex: 1;
+  border: none;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.trackerWrapper button {
+  background: #FFD814;
+  border: none;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.trackerWrapper button:hover {
+  background: #F7CA00;
+}
+
 .bannerSection {
   background: #f0f4f1;
   padding: 80px 0;

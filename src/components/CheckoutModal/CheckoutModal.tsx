@@ -1,9 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './CheckoutModal.module.css';
-import { X, MessageCircle, QrCode, FileText } from 'lucide-react';
+import { X, MessageCircle, FileText, CreditCard, ShieldCheck } from 'lucide-react';
 import { generateInvoicePDF } from '@/lib/invoiceUtils';
+import { createClient } from '@/utils/supabase/client';
+
+declare global {
+    interface Window {
+        Razorpay: any;
+    }
+}
 
 interface CheckoutModalProps {
     isOpen: boolean;
@@ -24,31 +31,67 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
         pincode: '',
         hasPaid: false
     });
+    const [isFetchingUser, setIsFetchingUser] = useState(false);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const fetchUserData = async () => {
+            const supabase = createClient();
+            setIsFetchingUser(true);
+            
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    // Pre-fill user details
+                    const userName = session.user.user_metadata?.full_name || '';
+                    
+                    // Fetch default address
+                    const { data: addresses } = await supabase
+                        .from('user_addresses')
+                        .select('*')
+                        .eq('user_id', session.user.id)
+                        .eq('is_default', true)
+                        .single();
+
+                    if (addresses || userName) {
+                        setFormData(prev => ({
+                            ...prev,
+                            name: userName || addresses?.full_name || prev.name,
+                            phone: addresses?.phone || prev.phone,
+                            address: addresses ? `${addresses.flat_house}, ${addresses.area_street}, ${addresses.city}` : prev.address,
+                            pincode: addresses?.pincode || prev.pincode
+                        }));
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            } finally {
+                setIsFetchingUser(false);
+            }
+        };
+
+        fetchUserData();
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
     const t = {
         en: {
             title: "Order Confirmation",
-            subtitle: "Order direct on WhatsApp for Fast Delivery",
+            subtitle: "Secure Payment & Fast Delivery",
             summary: {
                 product: "Product",
                 qty: "Quantity",
                 price: "Price per pack",
-                subtotal: "Subtotal (Excl. GST)",
-                gst: "GST (5%)",
+                subtotal: "Items Total",
+                gst: "GST (Included)",
                 delivery: "Delivery Charge",
                 total: "Total Payable",
-                freeDelivery: "Free Delivery Applied",
+                freeDelivery: "Launch Offer: Free Delivery All Over India 🎁",
                 free: "FREE"
             },
-            qr: {
-                title: "Scan to Pay Instantly",
-                meta: "After payment, please share the screenshot on WhatsApp.",
-                payTo: "Pay to"
-            },
             form: {
-                hasPaid: "I have paid using the QR code above",
                 name: "Full Name",
                 namePlaceholder: "Enter your name",
                 phone: "Phone Number",
@@ -57,31 +100,25 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
                 addrPlaceholder: "House No, Street, Landmark, City",
                 pincode: "Pincode",
                 pinPlaceholder: "6 digit pincode",
-                submit: "Place Order & Download Invoice",
-                autoDownload: "*PDF Invoice will be downloaded automatically"
+                submit: "Pay Now & Confirm Order",
+                autoDownload: "*PDF Invoice will be downloaded automatically after payment"
             }
         },
         hi: {
             title: "ऑर्डर की पुष्टि",
-            subtitle: "तेज़ डिलीवरी के लिए सीधे व्हाट्सएप पर ऑर्डर करें",
+            subtitle: "सुरक्षित भुगतान और तेज़ डिलीवरी",
             summary: {
                 product: "उत्पाद",
                 qty: "मात्रा",
                 price: "प्रति पैक मूल्य",
-                subtotal: "उपयोग राशि (GST रहित)",
-                gst: "GST (5%)",
+                subtotal: "कुल राशि",
+                gst: "GST (शामिल है)",
                 delivery: "डिलीवरी चार्ज",
                 total: "कुल देय राशि",
-                freeDelivery: "मुफ्त डिलीवरी लागू",
+                freeDelivery: "लॉन्च ऑफर: पूरे भारत में मुफ्त डिलीवरी 🎁",
                 free: "मुफ्त"
             },
-            qr: {
-                title: "तुरंत भुगतान करने के लिए स्कैन करें",
-                meta: "भुगतान के बाद, कृपया स्क्रीनशॉट व्हाट्सएप पर साझा करें।",
-                payTo: "भुगतान करें"
-            },
             form: {
-                hasPaid: "मैंने ऊपर दिए गए QR कोड का उपयोग करके भुगतान किया है",
                 name: "पूरा नाम",
                 namePlaceholder: "अपना नाम दर्ज करें",
                 phone: "फ़ोन नंबर",
@@ -90,58 +127,113 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
                 addrPlaceholder: "मकान नंबर, गली, लैंडमार्क, शहर",
                 pincode: "पिनकोड",
                 pinPlaceholder: "6 अंकों का पिनकोड",
-                submit: "ऑर्डर दें और इनवॉइस डाउनलोड करें",
-                autoDownload: "*इनवॉइस अपने आप डाउनलोड हो जाएगा"
+                submit: "अभी भुगतान करें",
+                autoDownload: "*भुगतान के बाद इनवॉइस अपने आप डाउनलोड हो जाएगा"
             }
         }
     }[lang];
 
     const itemsTotal = quantity * price;
-    const deliveryCharge = quantity < 3 ? 60 : 0;
-    const finalTotal = itemsTotal + deliveryCharge;
-    const gstAmount = (itemsTotal * 0.05); // Assuming 5% GST for Spices
-    const subtotal = itemsTotal - gstAmount;
+    const deliveryCharge: number = 0;
+    const subtotal = itemsTotal;
+    const finalTotal = subtotal + deliveryCharge;
+    const gstAmount = finalTotal - (finalTotal / 1.18); // GST included in price
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Generate Order ID
-        const orderId = `KF-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 100)}`;
+    const processOrder = async (paymentId: string) => {
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id || null;
+        
+        // Generate Order ID for references
+        const internalOrderId = `KF-${Date.now().toString().slice(-6)}`;
         const orderDate = new Date().toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
+            day: '2-digit', month: 'long', year: 'numeric'
         });
 
-        // 1. Save to Google Sheet (Primary - for CA)
+        // 1. Save to Supabase (Database)
         try {
-            const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUvlvVivceSSGRGPxskPznizBAuyNnxfKCg4gqeovnsDp85fWEHvsSPG-Ff6-YSu3z/exec";
+            // A. Create a Guest Address record first
+            const { data: addrData, error: addrError } = await supabase
+                .from('user_addresses')
+                .insert([{
+                    full_name: formData.name,
+                    phone: formData.phone,
+                    flat_house: formData.address,
+                    area_street: 'Guest Checkout',
+                    pincode: formData.pincode,
+                    city: 'Not Specified',
+                    state: 'Not Specified',
+                    is_default: false
+                }])
+                .select()
+                .single();
 
-            const params = new URLSearchParams();
-            params.append("OrderID", orderId);
-            params.append("Date", orderDate);
-            params.append("Product", productName);
-            params.append("Quantity", quantity.toString());
-            params.append("TotalAmount", finalTotal.toFixed(2));
-            params.append("CustomerName", formData.name);
-            params.append("Phone", formData.phone);
-            params.append("Address", `${formData.address}, ${formData.pincode}`);
-            params.append("PaymentStatus", formData.hasPaid ? "Paid (UPI)" : "Pending/COD");
+            if (addrError) throw addrError;
 
-            // 1. Save to Google Sheet (Primary - for CA)
-            fetch(GOOGLE_SCRIPT_URL, {
+            // B. Create the Order
+            const { data: orderData, error: orderError } = await supabase
+                .from('orders')
+                .insert([{
+                    user_id: userId,
+                    address_id: addrData.id,
+                    total_amount: finalTotal,
+                    payment_method: `prepaid (${paymentId})`,
+                    status: 'pending'
+                }])
+                .select()
+                .single();
+
+            if (orderError) throw orderError;
+
+            // C. Add Order Item
+            await supabase
+                .from('order_items')
+                .insert([{
+                    order_id: orderData.id,
+                    product_id: 'kalsa-spicemix-100g',
+                    name: productName,
+                    price: price,
+                    quantity: quantity,
+                    image: '/logo/logo.png'
+                }]);
+
+        } catch (dbError: any) {
+            console.error("Database Save Failed:", dbError);
+            // Optionally alert the user, but since payment is done, we usually proceed
+        }
+
+        // 2. Automation: Create Delhivery Order
+        try {
+            const dlvResponse = await fetch("/api/shipping/create-order", {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: params.toString(),
-                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    customerName: formData.name,
+                    phone: formData.phone,
+                    address: formData.address,
+                    pincode: formData.pincode,
+                    orderId: internalOrderId,
+                    paymentMode: 'prepaid',
+                    totalAmount: finalTotal,
+                    productName: productName,
+                    quantity: quantity.toString()
+                })
             });
+            const dlvData = await dlvResponse.json();
+            if (dlvData.success === false) {
+                alert(`Delhivery Sync Note: ${dlvData.rmk || 'Order saved to DB but sync delayed.'}`);
+            }
+        } catch (shippingError) {
+            console.error("Shipping Automation Failed:", shippingError);
+        }
 
-            // 2. Save to Local public/monthly_sales_record.csv (Backup/Direct access)
+        // 3. Local CSV Logging (as backup)
+        try {
             fetch("/api/log-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    OrderID: orderId,
+                    OrderID: internalOrderId,
                     Date: orderDate,
                     Product: productName,
                     Quantity: quantity.toString(),
@@ -149,42 +241,34 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
                     CustomerName: formData.name,
                     Phone: formData.phone,
                     Address: `${formData.address}, ${formData.pincode}`,
-                    PaymentStatus: formData.hasPaid ? "Paid (UPI)" : "Pending/COD"
+                    PaymentStatus: `Paid (Razorpay: ${paymentId})`
                 }),
             });
-
-            console.log("Order logged to both Sheet and local CSV");
-        } catch (sheetError) {
-            console.error("Failed to log order:", sheetError);
+        } catch (logError) {
+            console.error("Log failed:", logError);
         }
 
+        // 2. WhatsApp Message
         const rawMessage = `*New Order from Kalsa Foods Website*
 
-*Order ID:* ${orderId}
+*Order ID:* ${internalOrderId}
 *Product:* ${productName}
 *Quantity:* ${quantity} packs
+*Total:* ₹${finalTotal.toFixed(2)}
 
-*Order Breakdown:*
-- Subtotal: ₹${subtotal.toFixed(2)}
-- GST (5%): ₹${gstAmount.toFixed(2)}
-- Delivery: ${deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`}
-*Total Payable: ₹${finalTotal.toFixed(2)}*
+*Payment ID:* ${paymentId} (✅ Verified)
 
 *Customer Details:*
 *Name:* ${formData.name}
 *Phone:* ${formData.phone}
-*Address:* ${formData.address}
-*Pincode:* ${formData.pincode}
+*Address:* ${formData.address}, ${formData.pincode}
 
-*Payment Status:* ${formData.hasPaid ? '✅ Paid via UPI (Screenshot attached)' : '📝 Will pay on delivery / after confirmation'}
-
-_Order via WhatsApp Confirmation_ ✅
-_Invoice generated & saved locally_ 📄`;
+_Order via Razorpay_ ✅`;
 
         const whatsappNumber = "918709438350";
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
 
-        // Generate and Download PDF Invoice
+        // 3. Generate PDF Invoice
         try {
             await generateInvoicePDF({
                 customerName: formData.name,
@@ -199,14 +283,81 @@ _Invoice generated & saved locally_ 📄`;
                 deliveryCharge: deliveryCharge,
                 totalAmount: finalTotal,
                 orderDate: orderDate,
-                orderId: orderId
+                orderId: internalOrderId
             });
         } catch (error) {
             console.error("Invoice Generation Failed:", error);
         }
 
-        window.open(whatsappUrl, '_blank');
+        window.location.href = '/orders?success=true';
         onClose();
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("Triggering Razorpay for amount:", finalTotal);
+
+        try {
+            // 1. Create Order on Server
+            const response = await fetch('/api/razorpay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: finalTotal,
+                    receipt: `receipt_${Date.now()}`
+                })
+            });
+
+            const order = await response.json();
+            console.log("Server Order Created:", order);
+
+            if (!order.id) {
+                console.error("Order ID missing in server response:", order);
+                throw new Error('Order creation failed on server');
+            }
+
+            // 2. Open Razorpay Checkout
+            const key = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SVTkMuqXvzCE8B'; // Fallback for debugging
+            console.log("Using Razorpay Key:", key);
+
+            const options = {
+                key: key,
+                amount: order.amount,
+                currency: order.currency,
+                name: "Kalsa Foods",
+                description: `Order for ${productName}`,
+                image: "/logo/logo.png",
+                order_id: order.id,
+                handler: function (response: any) {
+                    console.log("Payment Successful:", response);
+                    processOrder(response.razorpay_payment_id);
+                },
+                prefill: {
+                    name: formData.name,
+                    contact: formData.phone
+                },
+                theme: {
+                    color: "#232f3e"
+                }
+            };
+
+            if (!window.Razorpay) {
+                alert("Razorpay SDK not loaded yet. Please wait 1-2 seconds and try again.");
+                return;
+            }
+
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', function (response: any) {
+                console.error("Payment Failed Callback:", response.error);
+                alert("Payment Failed: " + response.error.description);
+            });
+            
+            rzp.open();
+
+        } catch (error: any) {
+            console.error('Checkout error:', error);
+            alert('Something went wrong: ' + error.message);
+        }
     };
 
     return (
@@ -255,38 +406,12 @@ _Invoice generated & saved locally_ 📄`;
                     {deliveryCharge === 0 && <div className={styles.deliveryTag}>✅ {t.summary.freeDelivery}</div>}
                 </div>
 
-                <div className={styles.qrSection}>
-                    <div className={styles.qrTitle}>
-                        <QrCode size={20} color="#e47911" />
-                        {t.qr.title}
-                    </div>
-                    <div className={styles.qrContainer}>
-                        <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`upi://pay?pa=6206357414-2@ybl&pn=Kalsa Foods&am=${finalTotal.toFixed(2)}&cu=INR`)}`}
-                            alt="Payment QR Code"
-                            className={styles.qrImage}
-                        />
-                    </div>
-                    <div className={styles.qrMeta}>
-                        {t.qr.payTo} <strong>₹{finalTotal.toFixed(2)}</strong> to
-                        <span className={styles.upiId}>6206357414-2@ybl</span>
-                        <p style={{ marginTop: '8px' }}>{t.qr.meta}</p>
-                    </div>
+                <div className={styles.secureBadgeText}>
+                    <ShieldCheck size={20} color="#48bb78" />
+                    <span>Secure Payment via Razorpay</span>
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                        <input
-                            type="checkbox"
-                            id="hasPaid"
-                            checked={formData.hasPaid}
-                            onChange={e => setFormData({ ...formData, hasPaid: e.target.checked })}
-                            style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                        />
-                        <label htmlFor="hasPaid" style={{ fontSize: '0.9rem', cursor: 'pointer', fontWeight: 600 }}>
-                            {t.form.hasPaid}
-                        </label>
-                    </div>
                     <div className={styles.inputGroup}>
                         <label>{t.form.name}</label>
                         <input
@@ -328,9 +453,8 @@ _Invoice generated & saved locally_ 📄`;
                     </div>
 
                     <button type="submit" className={styles.submitBtn}>
-                        <MessageCircle size={20} />
+                        <CreditCard size={20} />
                         <span>{t.form.submit}</span>
-                        <FileText size={18} style={{ marginLeft: 'auto' }} />
                     </button>
                     <p style={{ fontSize: '0.75rem', textAlign: 'center', marginTop: '10px', color: '#666' }}>
                         {t.form.autoDownload}

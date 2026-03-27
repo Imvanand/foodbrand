@@ -5,9 +5,13 @@ import Image from 'next/image';
 import styles from './ProductShowcase.module.css';
 import { getProductImages } from '@/lib/actions';
 import CheckoutModal from '../CheckoutModal/CheckoutModal';
-import { Share2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Share2, Heart } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
+import { useCart } from '@/context/CartContext';
 
 import { useLanguage } from '@/context/LanguageContext';
+import PincodeCheck from '../PincodeCheck/PincodeCheck';
 
 const ProductShowcase = () => {
     const { lang } = useLanguage();
@@ -17,20 +21,89 @@ const ProductShowcase = () => {
     const [isZooming, setIsZooming] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = useState(false);
-    const [quantity, setQuantity] = useState(1);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [localQuantity, setLocalQuantity] = useState(1);
+    const [isInWishlist, setIsInWishlist] = useState(false);
+    const [productData, setProductData] = useState<any>(null);
+    const router = useRouter();
+    const supabase = createClient();
+    const { cart, addToCart, updateQuantity, removeFromCart } = useCart();
+
+    // Check if this product is already in cart
+    const cartItem = cart.find(item => item.product_id === 'kalsa-spicemix-100g');
+    const quantity = cartItem ? cartItem.quantity : 0;
+
+    const [user, setUser] = useState<any>(null);
+
+    // Get session
+    useEffect(() => {
+        const getSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user || null);
+        };
+        getSession();
+    }, []);
 
     useEffect(() => {
         setMounted(true);
-        const fetchImages = async () => {
+        const fetchData = async () => {
             const images = await getProductImages();
             if (images.length > 0) {
                 setProductImages(images);
                 setActiveImage(images[0]);
             }
+
+            try {
+                const { data: pData, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('id', 'kalsa-spicemix-100g')
+                    .single();
+                
+                if (pData) {
+                    setProductData(pData);
+                    if (pData.main_image || (pData.images && pData.images.length > 0)) {
+                        setProductImages(prev => {
+                            let newImages = [...prev];
+                            
+                            // Add additional images first
+                            if (pData.images && Array.isArray(pData.images)) {
+                                pData.images.forEach((img: string) => {
+                                    if (img && !newImages.includes(img)) {
+                                        newImages.push(img);
+                                    }
+                                });
+                            }
+                            
+                            // Ensure main_image is at the very beginning
+                            if (pData.main_image) {
+                                newImages = newImages.filter(img => img !== pData.main_image);
+                                newImages.unshift(pData.main_image);
+                            }
+                            
+                            return newImages;
+                        });
+                        
+                        setActiveImage(pData.main_image || (pData.images && pData.images[0]) || null);
+
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch product data", err);
+            }
+
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                const { data } = await supabase
+                    .from('user_wishlist')
+                    .select('id')
+                    .eq('user_id', session.user.id)
+                    .eq('product_id', 'kalsa-spicemix-100g')
+                    .single();
+                if (data) setIsInWishlist(true);
+            }
         };
-        fetchImages();
-    }, []);
+        fetchData();
+    }, [supabase]);
 
     const content = {
         en: {
@@ -47,8 +120,8 @@ const ProductShowcase = () => {
             specTitle: "Specifications",
             additionalTitle: "Additional Information",
             offerTitle: "🚀 Launch Offer",
-            offerText: "Buy 3 or more Packs & Get Free Delivery (₹60 charge for 1-2 packs)",
-            moqNotice: "Special Offer: 3+ Packs for Free Delivery",
+            offerText: "Launch Offer: Free Delivery All Over India",
+            moqNotice: "Launch Offer: Free Delivery All Over India",
             aboutItems: [
                 "Inspired by Generations of Home Cooking: Crafted from our family’s time-tested recipe, bringing the warmth and authenticity of traditional Indian kitchens to your meals.",
                 "One Masala, Multiple Dishes: Perfect all-purpose blend for sabzi, curry, paneer, chicken, egg, and everyday recipes.",
@@ -87,8 +160,8 @@ const ProductShowcase = () => {
             specTitle: "विशेष विवरण",
             additionalTitle: "अतिरिक्त जानकारी",
             offerTitle: "🚀 लॉन्च ऑफर",
-            offerText: "3 या अधिक पैक खरीदें और मुफ्त डिलीवरी पाएं (1-2 पैक पर ₹60 चार्ज)",
-            moqNotice: "विशेष ऑफर: 3+ पैक पर मुफ्त डिलीवरी",
+            offerText: "लॉन्च ऑफर: पूरे भारत में मुफ्त डिलीवरी",
+            moqNotice: "लॉन्च ऑफर: पूरे भारत में मुफ्त डिलीवरी",
             aboutItems: [
                 "पीढ़ियों की घर की कुकिंग से प्रेरित: हमारे परिवार के समय की कसौटी पर खरी उतरी रेसिपी से तैयार, जो आपके भोजन में पारंपरिक भारतीय रसोई की गर्माहट और प्रामाणिकता लाती है।",
                 "एक मसाला, कई व्यंजन: सब्जी, करी, पनीर, चिकन, अंडे और रोजमर्रा की रेसिपी के लिए एकदम सही सर्व-उद्देशीय मिश्रण।",
@@ -115,7 +188,30 @@ const ProductShowcase = () => {
         }
     };
 
-    const t = content[lang];
+    const t = productData ? {
+        breadcrumb: productData[`breadcrumb_${lang}`],
+        name: productData[`name_${lang}`],
+        fullName: productData[`full_name_${lang}`],
+        tagline: productData[`tagline_${lang}`],
+        aboutTitle: lang === 'hi' ? "इस आइटम के बारे में" : "About this item",
+        vegText: lang === 'hi' ? "शाकाहारी" : "Vegetarian",
+        qtyLabel: lang === 'hi' ? "मात्रा:" : "Quantity:",
+        addBtn: lang === 'hi' ? `कार्ट में ${quantity} जोड़ें` : `Add ${quantity} to Cart`,
+        buyNowBtn: lang === 'hi' ? "अभी खरीदें" : "Buy Now",
+        infoTitle: lang === 'hi' ? "उत्पाद की जानकारी" : "Product information",
+        specTitle: lang === 'hi' ? "विशेष विवरण" : "Specifications",
+        additionalTitle: lang === 'hi' ? "अतिरिक्त जानकारी" : "Additional Information",
+        offerTitle: productData[`offer_title_${lang}`],
+        offerText: productData[`offer_text_${lang}`],
+        moqNotice: productData[`moq_notice_${lang}`],
+        aboutItems: productData[`about_items_${lang}`],
+        specifications: productData[`specifications_${lang}`],
+        additionalInfo: productData[`additional_info_${lang}`],
+        price: productData.price,
+        mrp: productData.mrp,
+        discountPercentage: productData.discount_percentage,
+        pricePerUnit: productData[`unit_price_text_${lang}`]
+    } : { ...content[lang as keyof typeof content], price: 139, mrp: 179, discountPercentage: 22, pricePerUnit: "(₹139 /100 g)" };
 
     const handleMouseMove = (e: MouseEvent) => {
         if (!containerRef.current) return;
@@ -140,8 +236,6 @@ const ProductShowcase = () => {
     const handleShare = async () => {
         try {
             let filesArray: File[] = [];
-            
-            // Try to generate a File object from the active image to share
             if (activeImage) {
                 try {
                     const response = await fetch(activeImage);
@@ -152,27 +246,59 @@ const ProductShowcase = () => {
                     console.log("Error fetching image for share", e);
                 }
             }
-
             const shareData: ShareData = {
                 title: t.fullName,
                 text: `${t.fullName}\n${t.tagline}`,
                 url: window.location.href,
             };
-
-            // If browser supports file sharing, attach the image
             if (filesArray.length > 0 && navigator.canShare && navigator.canShare({ files: filesArray })) {
                 shareData.files = filesArray;
             }
-
             if (navigator.share) {
                 await navigator.share(shareData);
             } else {
-                // Fallback for browsers that don't support native share
                 await navigator.clipboard.writeText(`${t.fullName}\n${window.location.href}`);
                 alert("Product link copied to clipboard!");
             }
         } catch (err) {
             console.log('Error sharing', err);
+        }
+    };
+
+    const handleToggleWishlist = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            alert("Please login to add items to your wishlist");
+            router.push('/login');
+            return;
+        }
+
+        try {
+            if (isInWishlist) {
+                const { error } = await supabase
+                    .from('user_wishlist')
+                    .delete()
+                    .eq('user_id', session.user.id)
+                    .eq('product_id', 'kalsa-spicemix-100g');
+                
+                if (error) throw error;
+                setIsInWishlist(false);
+            } else {
+                const { error } = await supabase
+                    .from('user_wishlist')
+                    .insert([{
+                        user_id: session.user.id,
+                        product_id: 'kalsa-spicemix-100g',
+                        product_name: t.name,
+                        product_image: activeImage
+                    }]);
+                
+                if (error) throw error;
+                setIsInWishlist(true);
+            }
+        } catch (err: any) {
+            console.error("Wishlist error:", err);
+            alert("Could not update wishlist. Did you run the SQL code in Supabase editor? Error: " + err.message);
         }
     };
 
@@ -240,22 +366,33 @@ const ProductShowcase = () => {
                             <div className={styles.breadcrumb}>{t.breadcrumb}</div>
                             <div className={styles.titleWrapper}>
                                 <h1 className={styles.title}>{t.fullName}</h1>
-                                <button onClick={handleShare} className={styles.shareBtn} aria-label="Share">
-                                    <Share2 size={24} />
-                                </button>
+                                <div className={styles.actionBtns}>
+                                {user && (
+                                    <button 
+                                        onClick={handleToggleWishlist} 
+                                        className={`${styles.wishlistBtn} ${isInWishlist ? styles.inWishlist : ''}`}
+                                        aria-label="Add to Wishlist"
+                                    >
+                                        <Heart size={24} fill={isInWishlist ? "#ff4757" : "none"} color={isInWishlist ? "#ff4757" : "#555"} />
+                                    </button>
+                                )}
+                                    <button onClick={handleShare} className={styles.shareBtn} aria-label="Share">
+                                        <Share2 size={24} />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className={styles.divider}></div>
 
                             <div className={styles.priceArea}>
-                                <div className={styles.discountBadge}>-22%</div>
+                                <div className={styles.discountBadge}>-{t.discountPercentage}%</div>
                                 <div className={styles.priceColumn}>
                                     <span className={styles.priceSymbol}>₹</span>
-                                    <span className={styles.priceMain}>139</span>
-                                    <span className={styles.pricePerUnit}>(₹139 /100 g)</span>
+                                    <span className={styles.priceMain}>{t.price}</span>
+                                    <span className={styles.pricePerUnit}>{t.pricePerUnit}</span>
                                 </div>
                             </div>
-                            <div className={styles.mrp}>M.R.P.: <span className={styles.strike}>₹179.00</span></div>
+                            <div className={styles.mrp}>M.R.P.: <span className={styles.strike}>₹{t.mrp}.00</span></div>
                             <p className={styles.inclusiveText}>Inclusive of all taxes</p>
 
                             <div className={styles.offerCard}>
@@ -270,6 +407,8 @@ const ProductShowcase = () => {
                                 </div>
                             </div>
 
+                            <PincodeCheck />
+
                             <div className={styles.divider}></div>
 
                             <div className={styles.vegBadge}>
@@ -277,40 +416,56 @@ const ProductShowcase = () => {
                                 This is a <span className={styles.vegText}>{t.vegText}</span> product.
                             </div>
 
-                            <div className={styles.qtySection}>
-                                <label htmlFor="quantity">{t.qtyLabel}</label>
-                                <div className={styles.qtySelector}>
-                                    <button
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        className={styles.qtyBtn}
-                                        disabled={quantity <= 1}
-                                    >-</button>
-                                    <input
-                                        type="number"
-                                        id="quantity"
-                                        value={quantity}
-                                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                                        className={styles.qtyInput}
-                                        min="1"
-                                    />
-                                    <button
-                                        onClick={() => setQuantity(quantity + 1)}
-                                        className={styles.qtyBtn}
-                                    >+</button>
-                                </div>
-                            </div>
 
-                            <div className={styles.ctaWrapper}>
-                                <button
-                                    className={styles.buyBtn}
-                                    onClick={() => setIsModalOpen(true)}
-                                >
-                                    {t.addBtn}
-                                </button>
+            <div className={styles.ctaWrapper}>
+                                {quantity === 0 ? (
+                                    <button
+                                        className={styles.buyBtn}
+                                        onClick={() => addToCart({
+                                            product_id: 'kalsa-spicemix-100g',
+                                            name: t.name,
+                                            price: t.price || 139,
+                                            quantity: 1,
+                                            image: activeImage
+                                        })}
+                                    >
+                                        {t.addBtn.replace(quantity.toString(), '1')}
+                                    </button>
+                                ) : (
+                                    <div className={styles.cartQtySelector}>
+                                        <button
+                                            onClick={() => {
+                                                if (quantity === 1) {
+                                                    removeFromCart(cartItem!.id);
+                                                } else {
+                                                    updateQuantity(cartItem!.id, quantity - 1);
+                                                }
+                                            }}
+                                            className={styles.qtyBtn}
+                                        >-</button>
+                                        <span className={styles.qtyDisplay}>{quantity}</span>
+                                        <button
+                                            onClick={() => updateQuantity(cartItem!.id, quantity + 1)}
+                                            className={styles.qtyBtn}
+                                        >+</button>
+                                    </div>
+                                )}
+                                
                                 <div className={styles.secondaryBtns}>
                                     <button
                                         className={styles.buyNowBtn}
-                                        onClick={() => setIsModalOpen(true)}
+                                        onClick={async () => {
+                                            if (quantity === 0) {
+                                                await addToCart({
+                                                    product_id: 'kalsa-spicemix-100g',
+                                                    name: t.name,
+                                                    price: t.price || 139,
+                                                    quantity: 1,
+                                                    image: activeImage
+                                                });
+                                            }
+                                            router.push('/checkout');
+                                        }}
                                     >
                                         {t.buyNowBtn}
                                     </button>
@@ -367,13 +522,6 @@ const ProductShowcase = () => {
                 </div>
             </div>
 
-            <CheckoutModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                productName={t.fullName}
-                quantity={quantity}
-                price={139}
-            />
         </section>
     );
 };

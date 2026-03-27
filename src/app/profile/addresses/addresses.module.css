@@ -1,0 +1,214 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 100px);
+  background-color: #fdfcf8;
+}
+
+.breadcrumb {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: #224b33;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+  color: #e8a846;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #224b33;
+  font-family: serif;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.addCard {
+  border: 2px dashed #D5D9D9;
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  min-height: 250px;
+  color: #565959;
+  transition: background-color 0.2s;
+}
+
+.addCard:hover {
+  background-color: #f7f9f8;
+  border-color: #224b33;
+}
+
+.addIcon {
+  color: #224b33;
+  margin-bottom: 1rem;
+}
+
+.addText {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #224b33;
+}
+
+.addressCard {
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+}
+
+.defaultBadge {
+  font-size: 0.8rem;
+  color: #565959;
+  font-weight: 700;
+  border-bottom: 1px solid #D5D9D9;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.addressName {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.addressDetails {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.cardActions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.actionLink {
+  color: #224b33;
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.actionLink:hover {
+  text-decoration: underline;
+  color: #e8a846;
+}
+
+/* Modal / Form */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #224b33;
+  font-family: serif;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.formGroup {
+  margin-bottom: 1.2rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #888C8C;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #e8a846;
+  box-shadow: 0 0 0 2px rgba(232, 168, 70, 0.2);
+}
+
+.saveBtn {
+  background: #e8a846;
+  border: 1px solid #d69635;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  color: white;
+}
+
+.saveBtn:hover {
+  background: #d69635;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.checkboxGroup input {
+  width: auto;
+}

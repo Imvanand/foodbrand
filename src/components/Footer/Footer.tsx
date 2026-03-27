@@ -89,9 +89,6 @@ const Footer = () => {
                         <Mail size={18} />
                         <span>support@kalsafoods.com</span>
                     </div>
-                    <div className={styles.contactItem}>
-                        <span className={styles.gstinLabel}>GSTIN: 29KOEPK2332M1ZI</span>
-                    </div>
                 </div>
             </div>
 

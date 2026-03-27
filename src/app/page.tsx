@@ -8,6 +8,7 @@ import AvailableOnAmazon from "@/components/AvailableOnAmazon/AvailableOnAmazon"
 import RecipesSection from "@/components/RecipesSection/RecipesSection";
 import BulkOrder from "@/components/BulkOrder/BulkOrder";
 import Footer from "@/components/Footer/Footer";
+import { Search } from 'lucide-react';
 import styles from "./page.module.css";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -138,6 +139,21 @@ export default function Home() {
           <div className={styles.promoContent}>
             <span className={styles.promoLabel}>{t.promoLabel}</span>
             <p><a href="#bulk-order" style={{ textDecoration: 'underline' }}>{t.promoText}</a></p>
+          </div>
+          <div className={styles.quickTracker}>
+             <form onSubmit={(e) => {
+                 e.preventDefault();
+                 const q = (e.target as any).tracker.value;
+                 if (q) window.location.href = `/track?q=${q.toUpperCase()}`;
+             }}>
+                <div className={styles.trackerWrapper}>
+                    <input name="tracker" type="text" placeholder={lang === 'hi' ? "अपना ऑर्डर ट्रैक करें" : "Track Your Order Now"} />
+                    <button type="submit">
+                        <Search size={18} />
+                        <span>{lang === 'hi' ? "खोजें" : "Track"}</span>
+                    </button>
+                </div>
+             </form>
           </div>
         </div>
       </div>

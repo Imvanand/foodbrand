@@ -1,0 +1,235 @@
+.container {
+    max-width: 1000px;
+    margin: 80px auto;
+    padding: 20px;
+    min-height: 70vh;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 50px;
+    background: #fdfdfd;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    color: #111;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.searchBox {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 5px 5px 5px 20px;
+    border-radius: 50px;
+    border: 2px solid #ddd;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s;
+}
+
+.searchBox:focus-within {
+    box-shadow: 0 0 0 3px rgba(34, 75, 51, 0.2);
+    border-color: #224b33;
+}
+
+.searchBox input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.searchBox button {
+    background: #FFD814;
+    border: 1px solid #FCD200;
+    color: #111;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.searchBox button:hover {
+    background: #F7CA00;
+}
+
+.errorBox {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 15px;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 8px;
+    color: #c53030;
+    text-align: center;
+}
+
+.trackingResult {
+    margin: 40px 0;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.label {
+    display: block;
+    font-size: 0.8rem;
+    color: #777;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.statusPill {
+    padding: 6px 15px;
+    background: #f0f0f0;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #555;
+    display: inline-block;
+}
+
+.statusPill.delivered {
+    background: #e6fffa;
+    color: #2c7a7b;
+}
+
+.statusPill.in_transit, .statusPill.shipped {
+    background: #ebf8ff;
+    color: #2b6cb0;
+}
+
+.timeline {
+    margin-bottom: 40px;
+}
+
+.event {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.event:after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    width: 2px;
+    height: 100%;
+    background: #eee;
+}
+
+.event:last-child:after {
+    display: none;
+}
+
+.iconBox {
+    background: #f7f9f8;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #224b33;
+    z-index: 2;
+    border: 2px solid white;
+}
+
+.eventTitle {
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 2px;
+}
+
+.eventLocation {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.eventDate {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.tipBox {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #f0f7f4;
+    padding: 30px;
+    border-radius: 12px;
+    color: #224b33;
+}
+
+.tipBox h3 {
+    margin-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+    .container {
+        margin: 40px auto;
+        padding: 15px;
+    }
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    .searchBox {
+        border-radius: 8px;
+        flex-direction: column;
+        padding: 10px;
+    }
+    .searchBox input {
+        width: 100%;
+        text-align: center;
+    }
+    .searchBox button {
+        width: 100%;
+        margin-top: 10px;
+    }
+}

@@ -148,10 +148,10 @@ export const generateInvoicePDF = async (data: InvoiceData) => {
     doc.setFontSize(10);
     doc.setTextColor(80, 80, 80);
 
-    doc.text('Subtotal (Excl. GST):', 130, finalY);
+    doc.text('Base Amount (Excl. GST):', 130, finalY);
     doc.text(`Rs. ${data.subtotal.toFixed(2)}`, 185, finalY, { align: 'right' });
 
-    doc.text('GST (5%):', 130, finalY + 7);
+    doc.text('GST (Included):', 130, finalY + 7);
     doc.text(`Rs. ${data.gstAmount.toFixed(2)}`, 185, finalY + 7, { align: 'right' });
 
     doc.text('Delivery Charges:', 130, finalY + 14);

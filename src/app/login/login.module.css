@@ -1,0 +1,196 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding-top: 2rem;
+}
+
+.loginWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.logoContainer {
+  margin-bottom: 1.2rem;
+}
+
+.brandLogo {
+  height: 40px;
+  width: auto;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem 1.8rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 100%;
+}
+
+.title {
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.inputGroup label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.inputGroup input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #a6a6a6;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.1s;
+  box-shadow: 0 1px 0 rgba(255,255,255,.5), 0 1px 0 rgba(0,0,0,.07) inset;
+}
+
+.inputGroup input:focus {
+  border-color: #e77600;
+  box-shadow: 0 0 3px 2px rgba(228, 121, 17, .5);
+}
+
+.submitBtn {
+  background: #FFD814;
+  border: 1px solid #FCD200;
+  color: #111;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
+}
+
+.submitBtn:hover {
+  background: #F7CA00;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.notice {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #111;
+  margin: 1rem 0;
+}
+
+.notice a {
+  color: #0066c0;
+  text-decoration: none;
+}
+
+.notice a:hover {
+  color: #c45500;
+  text-decoration: underline;
+}
+
+.businessPrompt {
+  border-top: 1px solid #e7e7e7;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.businessPrompt p {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.businessPrompt a {
+  font-size: 0.8rem;
+  color: #0066c0;
+  text-decoration: none;
+}
+
+.businessPrompt a:hover {
+  color: #c45500;
+  text-decoration: underline;
+}
+
+.toggleSection {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #767676;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.secondaryBtn {
+  background: #fff;
+  border: 1px solid #D5D9D9;
+  color: #111;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
+  transition: background 0.2s;
+}
+
+.secondaryBtn:hover {
+  background: #f7fafa;
+}
+
+.error {
+  color: #c40000;
+  font-size: 0.8rem;
+  background: #fdf0f0;
+  border: 1px solid #c40000;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.success {
+  color: #067d62;
+  font-size: 0.8rem;
+  background: #f3fcfb;
+  border: 1px solid #067d62;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}

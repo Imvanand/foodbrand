@@ -1,0 +1,103 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: calc(100vh - 120px);
+}
+
+.breadcrumb {
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: #555;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.breadcrumb a {
+  color: #0066c0;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+  color: #c45500;
+}
+
+.current {
+  color: #c45500;
+  font-weight: 500;
+}
+
+.title {
+  font-size: 1.8rem;
+  color: #111;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.securityBox {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.value {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.editBtn {
+  background: linear-gradient(to bottom, #f7f8fa, #e7e9ec);
+  border: 1px solid #adb1b8;
+  padding: 0.4rem 1.2rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset;
+}
+
+.editBtn:hover {
+  border-color: #a2a6ac;
+  background: linear-gradient(to bottom, #e7e9ec, #d9dce1);
+}
+
+.doneBtn {
+  background: #FFD814;
+  border: 1px solid #FCD200;
+  color: #111;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 400;
+  cursor: pointer;
+  box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.doneBtn:hover {
+  background: #F7CA00;
+}

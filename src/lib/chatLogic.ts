@@ -13,15 +13,19 @@ const knowledgeBase: ChatResponse[] = [
         response: "Kalsa All-Purpose Spice Mix use karna bahut asaan hai! 500g sabzi ya meat ke liye sirf 1-2 teaspoons (chhote chammach) masala kaafi hai. Isme sare spices balanced hain, toh aap swad anusar thoda namak adjust kar sakte hain. For detailed recipes, visit: https://www.kalsafoods.com/recipes"
     },
     {
-        keywords: ['price', 'cost', 'mrp', 'rate', 'how much is', 'how much for', 'discount', 'delivery charge'],
-        response: "Kalsa All-Purpose Spice Mix is currently priced at ₹107 (MRP ₹179). That's a flat 40% launch discount! Delivery for 1-2 packs is ₹60, but if you order 3 or more packs, delivery is absolutely FREE!"
+        keywords: ['price', 'cost', 'mrp', 'rate', 'how much is', 'how much for', 'discount', 'delivery charge', 'delivery costs'],
+        response: "Kalsa All-Purpose Spice Mix is currently priced at ₹139. As a special Launch Offer, Delivery is completely FREE all over India! 🎁"
     },
     {
-        keywords: ['order', 'buy', 'purchase', 'how to buy'],
+        keywords: ['delivery', 'home delivery', 'ghar pe', 'pan india', 'delivers', 'shipping', 'courier', 'delivery se'],
+        response: "Haan ji! Hum Pan-India home delivery karte hain. Abhi Launch Offer mein poore India me Home Delivery bilkul FREE hai!"
+    },
+    {
+        keywords: ['order', 'buy', 'purchase', 'how to buy', 'kaise milega', 'mangvana', 'chahiye', 'le sakte hain', 'place order'],
         response: "You can place your order directly on our website by clicking the 'Buy Now' button. It will take you to WhatsApp where we confirm your details and provide fast delivery."
     },
     {
-        keywords: ['whatsapp', 'number', 'phone', 'contact', 'call', 'support'],
+        keywords: ['whatsapp', 'number', 'phone', 'contact', 'call', 'support', 'help'],
         response: "You can reach us on WhatsApp or email us at support@kalsafoods.com. We are based in Bangalore (560049)."
     },
     {

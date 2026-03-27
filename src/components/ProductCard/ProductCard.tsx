@@ -25,6 +25,7 @@ const ProductCard = ({ name, price, image, weight, rating, isNew }: ProductProps
                     alt={name}
                     fill
                     className={styles.image}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 />
                 <button className={styles.quickAdd}>
                     <ShoppingCart size={18} /> Add to Cart

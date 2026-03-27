@@ -59,6 +59,9 @@ export const metadata: Metadata = {
 
 import ChatWidget from "@/components/ChatWidget/ChatWidget";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { CartProvider } from "@/context/CartContext";
+import CartDrawer from "@/components/CartDrawer/CartDrawer";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -66,11 +69,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${outfit.variable} ${playfair.variable}`}>
+        <Script 
+          src="https://checkout.razorpay.com/v1/checkout.js" 
+          strategy="lazyOnload"
+        />
         <LanguageProvider>
-          {children}
-          <ChatWidget />
+          <CartProvider>
+            {children}
+            <ChatWidget />
+            <CartDrawer />
+          </CartProvider>
         </LanguageProvider>
       </body>
     </html>

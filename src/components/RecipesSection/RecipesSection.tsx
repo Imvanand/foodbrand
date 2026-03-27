@@ -50,6 +50,7 @@ const RecipesSection = () => {
                                     alt={recipe.title}
                                     fill
                                     className={styles.recipeImage}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                                 <div className={styles.overlay}>
                                     <span>{t.readBtn}</span>

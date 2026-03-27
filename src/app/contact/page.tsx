@@ -7,11 +7,15 @@ import BulkOrder from '@/components/BulkOrder/BulkOrder';
 import { Mail, Phone, MapPin, Instagram, Youtube, Send } from 'lucide-react';
 import styles from './contact.module.css';
 
+import { createClient } from '@/utils/supabase/client';
+
 export default function Contact() {
+    const supabase = createClient();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         phone: '',
+        subject: '',
         message: ''
     });
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -24,44 +28,54 @@ export default function Contact() {
         }));
     };
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form submission started");
         setStatus('submitting');
 
         try {
-            const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI89o5GH6eBedLdzZmCCQTnOH0MH_t1JDB16dQf5ouoaB4mi__j4bscQl4_cSe8nZQ/exec";
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            const { error: supabaseError } = await supabase
+                .from('support_tickets')
+                .insert([{
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    subject: formData.subject,
+                    message: formData.message,
+                    user_id: session?.user?.id || null,
+                    status: 'open'
+                }]);
 
-            // Using URLSearchParams forces application/x-www-form-urlencoded
+            if (supabaseError) throw supabaseError;
+
+            const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI89o5GH6eBedLdzZmCCQTnOH0MH_t1JDB16dQf5ouoaB4mi__j4bscQl4_cSe8nZQ/exec";
             const params = new URLSearchParams();
             params.append("Name", formData.name);
             params.append("Email", formData.email);
             params.append("Phone", formData.phone);
-            params.append("Message", formData.message);
-            // Include Date in case script needs it, though original script generates it
-            params.append("Date", new Date().toLocaleString());
+            params.append("Message", `[Ticket: ${formData.subject}] ${formData.message}`);
 
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: params.toString(),
                 mode: "no-cors",
-            });
+            }).catch(e => console.log('Google Script fallback failed', e));
 
-            console.log('Fetch request sent (no-cors mode) using URLSearchParams');
             setStatus('success');
-            setFormData({ name: '', email: '', phone: '', message: '' });
-            alert("Message sent successfully!");
+            setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+            alert("Ticket raised successfully!");
 
             setTimeout(() => setStatus('idle'), 5000);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error submitting form:', error);
             setStatus('error');
-            alert("Error submitting form. Check console for details.");
+            alert("Error: " + error.message);
         }
     };
+
 
     return (
         <main className={styles.contactPage}>
@@ -118,9 +132,9 @@ export default function Contact() {
                         </div>
                     </section>
 
-                    {/* Contact Form */}
+                    {/* Support Form */}
                     <section className={styles.formSection}>
-                        <h2 className={styles.formTitle}>Send a Message</h2>
+                        <h2 className={styles.formTitle}>Raise a Support Ticket</h2>
                         <form onSubmit={handleSubmit} className={styles.form}>
                             <div className={styles.formGrid}>
                                 <div className={styles.formGroup}>
@@ -165,7 +179,21 @@ export default function Contact() {
                                 </div>
 
                                 <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                                    <label htmlFor="message" className={styles.label}>Your Message</label>
+                                    <label htmlFor="subject" className={styles.label}>Subject</label>
+                                    <input
+                                        type="text"
+                                        id="subject"
+                                        name="subject"
+                                        value={formData.subject}
+                                        onChange={handleChange}
+                                        required
+                                        className={styles.input}
+                                        placeholder="Order issue, Refund request, etc."
+                                    />
+                                </div>
+
+                                <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                                    <label htmlFor="message" className={styles.label}>Detailed Description</label>
                                     <textarea
                                         id="message"
                                         name="message"
@@ -184,9 +212,9 @@ export default function Contact() {
                                 className={styles.submitBtn}
                                 disabled={status === 'submitting' || status === 'success'}
                             >
-                                {status === 'submitting' ? 'Sending...' : status === 'success' ? 'Message Sent!' : (
+                                {status === 'submitting' ? 'Submitting...' : status === 'success' ? 'Ticket Raised!' : (
                                     <>
-                                        Send Message <Send size={18} />
+                                        Submit Ticket <Send size={18} />
                                     </>
                                 )}
                             </button>
@@ -201,7 +229,6 @@ export default function Contact() {
                 </div>
             </div>
 
-            <BulkOrder />
             <Footer />
         </main>
     );

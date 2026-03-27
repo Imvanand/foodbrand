@@ -1,0 +1,348 @@
+.container {
+  font-family: Arial, sans-serif;
+  background-color: #f7f9fa;
+  min-height: 100vh;
+  color: #0f1111;
+}
+
+.topBar {
+  background-color: #232f3e;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: white;
+  font-size: 14px;
+}
+
+.topLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: -1px;
+}
+
+.accountHealth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.healthBadge {
+  background-color: #008a00;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.topSearch {
+  display: flex;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 400px;
+}
+
+.topSearch input {
+  border: none;
+  padding: 8px 12px;
+  width: 100%;
+  outline: none;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.topRightItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.pageHeader {
+  padding: 20px;
+  background: white;
+  border-bottom: 1px solid #d5d9d9;
+}
+
+.pageTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pageTitleRow h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.linkBtn {
+  color: #007185;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.linkBtn:hover {
+  text-decoration: underline;
+  color: #c45500;
+}
+
+.primaryBtn {
+  background-color: #f7ca00;
+  border: 1px solid #f2c200;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(213,217,217,0.5);
+}
+
+.secondaryBtn {
+  background-color: #fff;
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(213,217,217,0.5);
+}
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #d5d9d9;
+  padding-bottom: 0px;
+}
+
+.tab {
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+  color: #565959;
+}
+
+.tab.active {
+  border-bottom: 2px solid #007185;
+  color: #0f1111;
+  font-weight: 700;
+}
+
+.tabContent {
+  padding: 20px;
+}
+
+.filterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.filterLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  border: 1px solid #888c8c;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background: white;
+  width: 300px;
+}
+
+.searchBox input {
+  border: none;
+  outline: none;
+  margin-left: 8px;
+  width: 100%;
+}
+
+.tableWrapper {
+  background: white;
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dataTable th {
+  background-color: #f7f9fa;
+  border-bottom: 1px solid #d5d9d9;
+  padding: 10px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f1111;
+}
+
+.dataTable th span {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: #565959;
+}
+
+.dataTable td {
+  padding: 15px 10px;
+  border-bottom: 1px solid #d5d9d9;
+  font-size: 13px;
+  vertical-align: top;
+}
+
+.productCell {
+  display: flex;
+  gap: 15px;
+}
+
+.productImg {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.productDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.productTitle {
+  color: #007185;
+  font-weight: 400;
+  text-decoration: none;
+  max-width: 250px;
+  line-height: 1.4;
+}
+
+.productTitle:hover {
+  text-decoration: underline;
+  color: #c45500;
+}
+
+.skuInfo {
+  font-size: 12px;
+  color: #565959;
+}
+
+.statusPill {
+  display: inline-block;
+  background-color: #e7f4f9;
+  color: #007185;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #b3d6e5;
+}
+
+.editableValue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editIcon {
+  color: #007185;
+  cursor: pointer;
+}
+
+.editIcon:hover {
+  color: #c45500;
+}
+
+.actionsCell {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.actionBtn {
+  background: white;
+  border: 1px solid #d5d9d9;
+  border-radius: 8px 0 0 8px;
+  padding: 4px 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(213,217,217,0.5);
+}
+
+.dropdownBtn {
+  background: #f7f9fa;
+  border: 1px solid #d5d9d9;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+/* Modal from before */
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  padding: 15px 20px;
+  border-bottom: 1px solid #d5d9d9;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modalBody {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modalFooter {
+  padding: 15px 20px;
+  border-top: 1px solid #d5d9d9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

@@ -144,17 +144,36 @@
     margin-bottom: 5px;
 }
 
-.shareBtn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: #565959;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.actionBtns {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.shareBtn, .wishlistBtn {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  color: #555;
+  padding: 0;
+}
+
+.shareBtn:hover, .wishlistBtn:hover {
+  background-color: #f7f9f8;
+  border-color: #224b33;
+  color: #224b33;
+}
+
+.inWishlist {
+    border-color: #ff4757 !important;
 }
 
 .shareBtn:hover {
@@ -466,6 +485,47 @@
 
 .buyNowBtn:hover {
     background: #FA8914;
+}
+
+/* Amazon style Cart Qty Selector */
+.cartQtySelector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fdfcf8;
+    border: 1px solid #e7bb41;
+    border-radius: 8px;
+    height: 44px;
+    padding: 2px;
+    box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+}
+
+.qtyDisplay {
+    font-weight: 700;
+    color: #0f1111;
+    font-size: 1rem;
+    min-width: 30px;
+    text-align: center;
+}
+
+.cartQtySelector .qtyBtn {
+    background: #ffd814;
+    border: none;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0f1111;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.cartQtySelector .qtyBtn:hover {
+    background: #f7ca00;
 }
 
 @media (max-width: 1024px) {
