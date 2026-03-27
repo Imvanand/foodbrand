@@ -1,10 +1,15 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Removed top-level instantiation to prevent build failure
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
     try {
+        const apiKey = process.env.RESEND_API_KEY;
+        if (!apiKey) return NextResponse.json({ success: false, error: "API Key missing" }, { status: 500 });
+        const resend = new Resend(apiKey);
+
         const { data, error } = await resend.emails.send({
             from: 'Kalsa Foods <onboarding@resend.dev>',
             to: ['impreetianand28@gmail.com'], 
