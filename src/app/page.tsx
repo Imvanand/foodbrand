@@ -133,14 +133,10 @@ export default function Home() {
       <Navbar />
       <HeroSlider />
 
-      {/* Promo Bar */}
-      <div className={styles.promoBar}>
+      {/* Tracker Bar */}
+      <div className={styles.promoBar} style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
         <div className="container">
-          <div className={styles.promoContent}>
-            <span className={styles.promoLabel}>{t.promoLabel}</span>
-            <p><a href="#bulk-order" style={{ textDecoration: 'underline' }}>{t.promoText}</a></p>
-          </div>
-          <div className={styles.quickTracker}>
+          <div className={styles.quickTracker} style={{ marginTop: 0 }}>
              <form onSubmit={(e) => {
                  e.preventDefault();
                  const q = (e.target as any).tracker.value;
@@ -158,9 +154,19 @@ export default function Home() {
         </div>
       </div>
 
-      <CategoryBar />
-
       <ProductShowcase />
+
+      {/* Bulk Order Bar */}
+      <div className={styles.promoBar}>
+        <div className="container">
+          <div className={styles.promoContent} style={{ justifyContent: 'center' }}>
+            <span className={styles.promoLabel}>{t.promoLabel}</span>
+            <p><a href="#bulk-order" style={{ textDecoration: 'underline' }}>{t.promoText}</a></p>
+          </div>
+        </div>
+      </div>
+
+      <CategoryBar />
 
       <section className={styles.values}>
         <div className="container">
