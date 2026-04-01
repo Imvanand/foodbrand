@@ -69,7 +69,6 @@ export async function POST(req: Request) {
                 {
                     content: pdfBase64,
                     filename: `Invoice_${orderId}.pdf`,
-                    type: 'application/pdf',
                 },
             ],
         });
