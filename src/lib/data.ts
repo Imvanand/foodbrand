@@ -16,9 +16,9 @@ export async function getHomePageData() {
             .select('*')
             .eq('is_approved', true)
             .order('created_at', { ascending: false }),
-        supabase.from('order_items')
-            .select('quantity')
-            .eq('product_id', 'kalsa-spicemix-100g')
+        // Fetch order IDs from the last 30 days
+        supabase.from('orders')
+            .select('id')
             .gte('created_at', thirtyDaysAgo.toISOString())
     ]);
 
@@ -34,7 +34,18 @@ export async function getHomePageData() {
     }
     const breakdown = counts.map(c => reviews.length > 0 ? Math.round((c / reviews.length) * 100) : 0);
     
-    const monthlySales = salesRes.data?.reduce((acc: any, curr: any) => acc + (curr.quantity || 1), 0) || 0;
+    // Now get the sum of quantity for the specific product from these orders
+    let monthlySales = 0;
+    if (salesRes.data && salesRes.data.length > 0) {
+        const orderIds = salesRes.data.map(o => o.id);
+        const { data: itemSales } = await supabase
+            .from('order_items')
+            .select('quantity')
+            .eq('product_id', 'kalsa-spicemix-100g')
+            .in('order_id', orderIds);
+            
+        monthlySales = itemSales?.reduce((acc: any, curr: any) => acc + (curr.quantity || 1), 0) || 0;
+    }
 
     return {
         sliderImages,

@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 600; // Revalidate every 10 minutes
+
 export default async function Home() {
   const data = await getHomePageData();
 
