@@ -28,21 +28,25 @@ export default function AdminDashboard() {
             return;
         }
 
-        const { data: orders } = await supabase.from('orders').select('*');
-        const { data: tickets } = await supabase.from('support_tickets').select('*');
-        const { data: recovery } = await supabase.from('checkout_journeys').select('*');
-        const { data: shares } = await supabase.from('product_shares').select('*');
+        // Optimize: Fetch counts and sums instead of entire tables
+        const [ordersRes, ticketsRes, recoveryRes, sharesRes] = await Promise.all([
+            supabase.from('orders').select('status, total_amount'),
+            supabase.from('support_tickets').select('id', { count: 'exact', head: true }),
+            supabase.from('checkout_journeys').select('status'),
+            supabase.from('product_shares').select('id', { count: 'exact', head: true })
+        ]);
 
-        const totalRevenue = orders?.reduce((acc: number, o: any) => acc + Number(o.total_amount), 0) || 0;
-        const pendingOrders = orders?.filter((o: any) => o.status === 'pending').length || 0;
+        const orders = ordersRes.data || [];
+        const totalRevenue = orders.reduce((acc: number, o: any) => acc + Number(o.total_amount), 0);
+        const pendingOrders = orders.filter((o: any) => o.status === 'pending').length;
 
         setStats({
-            orders: orders?.length || 0,
+            orders: orders.length,
             revenue: totalRevenue,
-            tickets: tickets?.length || 0,
+            tickets: ticketsRes.count || 0,
             pending: pendingOrders,
-            recovery: recovery?.filter((j: any) => j.status === 'Payment_Success').length || 0,
-            shares: shares?.length || 0
+            recovery: recoveryRes.data?.filter((j: any) => j.status === 'Payment_Success').length || 0,
+            shares: sharesRes.count || 0
         });
         setLoading(false);
     };
