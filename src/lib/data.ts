@@ -4,14 +4,22 @@ import { getProductImages, getSliderImages } from './actions';
 export async function getHomePageData() {
     const supabase = await createClient();
 
-    const [sliderImages, productImages, productRes, reviewsRes] = await Promise.all([
+    // Fetch Monthly Sales (Last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const [sliderImages, productImages, productRes, reviewsRes, salesRes] = await Promise.all([
         getSliderImages(),
         getProductImages(),
         supabase.from('products').select('*').eq('id', 'kalsa-spicemix-100g').single(),
         supabase.from('product_reviews')
             .select('*')
             .eq('is_approved', true)
-            .order('created_at', { ascending: false })
+            .order('created_at', { ascending: false }),
+        supabase.from('order_items')
+            .select('quantity')
+            .eq('product_id', 'kalsa-spicemix-100g')
+            .gte('created_at', thirtyDaysAgo.toISOString())
     ]);
 
     // Fetch review stats
@@ -25,16 +33,8 @@ export async function getHomePageData() {
         });
     }
     const breakdown = counts.map(c => reviews.length > 0 ? Math.round((c / reviews.length) * 100) : 0);
-
-    // Fetch Monthly Sales (Last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const { data: sales } = await supabase
-        .from('order_items')
-        .select('quantity')
-        .eq('product_id', 'kalsa-spicemix-100g')
-        .gte('created_at', thirtyDaysAgo.toISOString());
-    const monthlySales = sales?.reduce((acc: any, curr: any) => acc + (curr.quantity || 1), 0) || 0;
+    
+    const monthlySales = salesRes.data?.reduce((acc: any, curr: any) => acc + (curr.quantity || 1), 0) || 0;
 
     return {
         sliderImages,

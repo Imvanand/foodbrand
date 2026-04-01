@@ -567,7 +567,7 @@ const ProductShowcase = ({ initialProductData, initialProductImages, initialRevi
                                         className={`${styles.thumb} ${activeImage === img ? styles.activeThumb : ''}`}
                                         onMouseEnter={() => setActiveImage(img)}
                                     >
-                                        <Image src={img} alt={`Thumbnail ${idx + 1}`} width={60} height={60} unoptimized />
+                                        <Image src={img} alt={`Thumbnail ${idx + 1}`} width={60} height={60} />
                                     </div>
                                 ))}
                             </div>
@@ -595,7 +595,6 @@ const ProductShowcase = ({ initialProductData, initialProductImages, initialRevi
                                     fill
                                     className={styles.mainImage}
                                     priority
-                                    unoptimized
                                 />
                                 {isZooming && (
                                     <>

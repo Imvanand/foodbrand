@@ -106,7 +106,6 @@ const HeroSlider = ({ initialImages = [] }: HeroSliderProps) => {
                         fill
                         priority
                         className={styles.image}
-                        unoptimized
                     />
                 </motion.div>
             </AnimatePresence>

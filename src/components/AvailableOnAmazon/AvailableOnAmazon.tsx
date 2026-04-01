@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './AvailableOnAmazon.module.css';
 import { useLanguage } from '@/context/LanguageContext';
+import Image from 'next/image';
 
 export default function AvailableOnAmazon() {
   const { lang } = useLanguage();
@@ -16,7 +17,7 @@ export default function AvailableOnAmazon() {
       description: "अपना पसंदीदा कलसा स्पाइस मिक्स मसाला अमेज़न के ज़रिए पूरे भारत में तेज़ी से मंगवाएं।",
       button: "अमेज़न पर खरीदें"
     }
-  }[lang];
+  }[lang as 'en' | 'hi'];
 
   const amazonUrl = "https://www.amazon.in/Kalsa-Foods-Masala-Authentic-Kitchen/dp/B0GS27VHFP/ref=sr_1_5?crid=SYF2RYMA011R&dib=eyJ2IjoiMSJ9.HOIQZzIM_abtQmnOJYn3-7MwpiiQCrKQ68t2g_domuiZ2X9wa9OKnfXJ8Trs6AkeQ2KxAQhyH0G_b8ZykJHi9jbW4ekBvEbVnLLVEzwjCSZSfaF2kG3d9X1OC6lGVDFCmwA1gh42NT80-nlAUyogta9noYrojs5FXOlLByizonkXHi5qU74RqzZPKD-8ty_YpfubHCNnnCz5rNZdtNFl0hL4UZEG0zk1LsiMhbjV7-UVgGVjf2uGILyyrLhMSStMh8KfQhW80y6rRQ9W8kow0VFgav24yz5EQFLvWIbOAZ4.EkoCiqEE_-U37GDVJbqqOmyMi5FMGZDlSlcX8hcmW4A&dib_tag=se&keywords=kalsa+spice+mix+masala&nsdOptOutParam=true&qid=1773613642&sprefix=%2Caps%2C389&sr=8-5";
 
@@ -37,7 +38,13 @@ export default function AvailableOnAmazon() {
             </a>
           </div>
           <div className={styles.imageWrapper}>
-            <img src="/Marketplace/Amazon.png" alt="Kalsa Spice Mix on Amazon" className={styles.productImage} />
+            <Image 
+              src="/Marketplace/Amazon.png" 
+              alt="Kalsa Spice Mix on Amazon" 
+              width={400}
+              height={400}
+              className={styles.productImage} 
+            />
           </div>
         </div>
       </div>
