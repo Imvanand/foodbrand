@@ -28,10 +28,7 @@ export default function AdminLogin() {
             setError(loginError.message);
             setLoading(false);
         } else {
-            // Check if it's the admin email (you can change this to your email)
-            // For now, any successful login will redirect, 
-            // but we'll add a check in the dashboard itself.
-            router.push('/admin/orders');
+            router.push('/admin/dashboard');
         }
     };
 

@@ -6,24 +6,123 @@ import styles from './ProductShowcase.module.css';
 import { getProductImages } from '@/lib/actions';
 import CheckoutModal from '../CheckoutModal/CheckoutModal';
 import { useRouter } from 'next/navigation';
-import { Share2, Heart } from 'lucide-react';
+import { Share2, Heart, ChevronLeft, ChevronRight, Star, ChevronDown } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useCart } from '@/context/CartContext';
+import Link from 'next/link';
 
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage, Language } from '@/context/LanguageContext';
 import PincodeCheck from '../PincodeCheck/PincodeCheck';
 
-const ProductShowcase = () => {
+const DEFAULT_PRODUCT_DETAILS = {
+    en: {
+        breadcrumb: "Kalsa Foods > Spices & Masalas",
+        name: "Kalsa foods 100% Natural Spice Mix Masala Powder 100gm",
+        fullName: "Spice Mix Masala | All-Purpose Indian Spice Blend | For Sabzi, Paneer & Curry | Rich Aroma & Authentic Taste | No Added Colors | 100g",
+        tagline: "Experience the true taste of homemade goodness",
+        aboutTitle: "About this item",
+        vegText: "Vegetarian",
+        qtyLabel: "Quantity:",
+        addBtn: "Add to Cart",
+        buyNowBtn: "Buy Now",
+        infoTitle: "Product information",
+        specTitle: "Specifications",
+        additionalTitle: "Additional Information",
+        offerTitle: "🚀 Launch Offer",
+        offerText: "Launch Offer: Free Delivery All Over India",
+        moqNotice: "Launch Offer: Free Delivery All Over India",
+        aboutItems: [
+            "Inspired by Generations of Home Cooking: Crafted from our family’s time-tested recipe, bringing the warmth and authenticity of traditional Indian kitchens to your meals.",
+            "One Masala, Multiple Dishes: Perfect all-purpose blend for sabzi, curry, paneer, chicken, egg, and everyday recipes.",
+            "Rich Aroma & Balanced Flavor: Expertly blended spices deliver a soulful fragrance, vibrant color, and perfectly balanced taste in every bite.",
+            "Premium Quality Whole Spices: Made from carefully selected, high-quality spices to ensure purity, freshness, and consistency.",
+            "No Artificial Colors or Preservatives: Free from added colors and harmful preservatives – just pure, authentic spice goodness.",
+            "Elevates Everyday Cooking: Transforms simple ingredients into flavorful, restaurant-style dishes at home."
+        ],
+        specifications: [
+            { label: "Brand Name", value: "Kalsa Foods" },
+            { label: "Item Form", value: "Powder" },
+            { label: "Diet Type", value: "Vegetarian" },
+            { label: "Specialty", value: "Natural" },
+            { label: "Container Type", value: "Standup pouch" },
+            { label: "Country of Origin", value: "India" }
+        ],
+        additionalInfo: [
+            { label: "Importer Contact Information", value: "Kalsa Foods" },
+            { label: "Item Type Name", value: "Kalsa Foods Spice Mix Masala (मसाला मिश्रण), 100 gm" },
+            { label: "Manufacturer", value: "Kalsa Foods" },
+            { label: "Manufacturer Contact Information", value: "Kalsa Foods" },
+            { label: "Packer Contact Information", value: "Kalsa Foods" },
+            { label: "Net Quantity", value: "100.0 gram" }
+        ]
+    },
+    hi: {
+        breadcrumb: "कलसा फूड्स > मसाले और मसाला",
+        name: "कलसा फूड्स 100% प्राकृतिक मसाला मिक्स मसाला पाउडर 100 ग्राम",
+        fullName: "स्पाइस मिक्स मसाला | सर्व-उद्देशीय भारतीय मसाला मिश्रण | सब्ज़ी, पनीर और करी के लिए | भरपूर सुगंध और प्रामाणिक स्वाद | कोई अतिरिक्त रंग नहीं | 100 ग्राम",
+        tagline: "घर के बने खाने की अच्छाई के असली स्वाद का अनुभव करें",
+        aboutTitle: "इस मद के बारे में",
+        vegText: "शाकाहारी",
+        qtyLabel: "मात्रा:",
+        addBtn: "कार्ट में जोड़ें",
+        buyNowBtn: "अभी खरीदें",
+        infoTitle: "उत्पाद जानकारी",
+        specTitle: "विशेष विवरण",
+        additionalTitle: "अतिरिक्त जानकारी",
+        offerTitle: "🚀 लॉन्च ऑफर",
+        offerText: "लॉन्च ऑफर: पूरे भारत में मुफ्त डिलीवरी",
+        moqNotice: "लॉन्च ऑफर: पूरे भारत में मुफ्त डिलीवरी",
+        aboutItems: [
+            "पीढ़ियों की घर की रसोई से प्रेरित: हमारे परिवार के समय की कसौटी पर खरी उतरी रेसिपी से तैयार, जो आपकी रसोई में पारंपरिक भारतीय रसोई की गर्माहट और प्रामाणिकता लाता है।",
+            "एक मसाला, कई व्यंजन: सब्ज़ी, करी, पनीर, चिकन, अंडे और रोज़मर्रा के व्यंजनों के लिए उपयुक्त सर्व-उद्देशीय मिश्रण।",
+            "भरपूर सुगंध और संतुलित स्वाद: कुशलता से मिश्रित मसाले हर निवाले में एक भावपूर्ण सुगंध, जीवंत रंग और पूरी तरह से संतुलित स्वाद प्रदान करते हैं।",
+            "प्रीमियम गुणवत्ता वाले साबुत मसाले: शुद्धता, ताज़गी और स्थिरता सुनिश्चित करने के लिए सावधानीपूर्वक चुने गए, उच्च गुणवत्ता वाले मसालों से बने।",
+            "कोई कृत्रिम रंग या संरक्षक नहीं: अतिरिक्त रंगों और हानिकारक संरक्षकों से मुक्त - बस शुद्ध, प्रामाणिक मसाले की अच्छाई।",
+            "रोज़मर्रा के खाना पकाने को बेहतर बनाता है: घर पर साधारण सामग्री को स्वादिष्ट, रेस्तरां शैली के व्यंजनों में बदल देता है।"
+        ],
+        specifications: [
+            { label: "ब्रांड का नाम", value: "कलसा फूड्स" },
+            { label: "आइटम फॉर्म", value: "पाउडर" },
+            { label: "आहार प्रकार", value: "शाकाहारी" },
+            { label: "विशेषता", value: "प्राकृतिक" },
+            { label: "कंटेनर प्रकार", value: "स्टैंडअप पाउच" },
+            { label: "उत्पत्ति का देश", value: "भारत" }
+        ],
+        additionalInfo: [
+            { label: "आयातक संपर्क जानकारी", value: "कलसा फूड्स" },
+            { label: "आइटम प्रकार का नाम", value: "कलसा फूड्स स्पाइस मिक्स मसाला (मसाला मिश्रण), 100 ग्राम" },
+            { label: "निर्माता", value: "कलसा फूड्स" },
+            { label: "निर्माता संपर्क जानकारी", value: "कलसा फूड्स" },
+            { label: "पैकर संपर्क जानकारी", value: "कलसा फूड्स" },
+            { label: "नेट मात्रा", value: "100.0 ग्राम" }
+        ]
+    }
+};
+
+
+interface ProductShowcaseProps {
+    initialProductData?: any;
+    initialProductImages?: string[];
+    initialReviewStats?: any;
+}
+
+const ProductShowcase = ({ initialProductData, initialProductImages, initialReviewStats }: ProductShowcaseProps) => {
     const { lang } = useLanguage();
-    const [productImages, setProductImages] = useState<string[]>([]);
-    const [activeImage, setActiveImage] = useState<string | null>(null);
+    const [productImages, setProductImages] = useState<string[]>(initialProductImages || []);
+    const [activeImage, setActiveImage] = useState<string | null>(initialProductImages?.[0] || null);
     const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
     const [isZooming, setIsZooming] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = useState(false);
     const [localQuantity, setLocalQuantity] = useState(1);
     const [isInWishlist, setIsInWishlist] = useState(false);
-    const [productData, setProductData] = useState<any>(null);
+    const [productData, setProductData] = useState<any>(initialProductData || {
+        id: 'kalsa-spicemix-100g',
+        name: DEFAULT_PRODUCT_DETAILS[lang as Language].name,
+        price: 139,
+        original_price: 199,
+        discount_percentage: 30
+    });
     const router = useRouter();
     const supabase = createClient();
     const { cart, addToCart, updateQuantity, removeFromCart } = useCart();
@@ -34,87 +133,70 @@ const ProductShowcase = () => {
 
     const [user, setUser] = useState<any>(null);
 
-    // Get session
-    useEffect(() => {
-        const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user || null);
-        };
-        getSession();
-    }, []);
-
     useEffect(() => {
         setMounted(true);
         const fetchData = async () => {
-            const images = await getProductImages();
-            if (images.length > 0) {
-                setProductImages(images);
-                setActiveImage(images[0]);
+            // 1. Get Session once
+            const { data: { session: currentSession } } = await supabase.auth.getSession();
+            
+            if (currentSession?.user && currentSession.user.email === 'imvanand1@gmail.com') {
+                setUser(null);
+            } else {
+                setUser(currentSession?.user || null);
             }
 
-            try {
-                const { data: pData, error } = await supabase
-                    .from('products')
-                    .select('*')
-                    .eq('id', 'kalsa-spicemix-100g')
-                    .single();
-                
-                if (pData) {
-                    setProductData(pData);
-                    if (pData.main_image || (pData.images && pData.images.length > 0)) {
-                        setProductImages(prev => {
-                            let newImages = [...prev];
-                            
-                            // Add additional images first
-                            if (pData.images && Array.isArray(pData.images)) {
-                                pData.images.forEach((img: string) => {
-                                    if (img && !newImages.includes(img)) {
-                                        newImages.push(img);
-                                    }
-                                });
-                            }
-                            
-                            // Ensure main_image is at the very beginning
-                            if (pData.main_image) {
-                                newImages = newImages.filter(img => img !== pData.main_image);
-                                newImages.unshift(pData.main_image);
-                            }
-                            
-                            return newImages;
-                        });
-                        
-                        setActiveImage(pData.main_image || (pData.images && pData.images[0]) || null);
+            // 2. Fetch everything else in PARALLEL if not provided
+            if (!initialProductData || !initialProductImages) {
+                const [images, productRes, wishlistRes] = await Promise.all([
+                    getProductImages(),
+                    supabase.from('products').select('*').eq('id', 'kalsa-spicemix-100g').single(),
+                    currentSession?.user ? supabase.from('user_wishlist').select('id').eq('user_id', currentSession.user.id).eq('product_id', 'kalsa-spicemix-100g').maybeSingle() : Promise.resolve({ data: null })
+                ]);
 
-                    }
+                // 3. Process Images
+                if (images.length > 0) {
+                    setProductImages(images);
+                    if (!activeImage) setActiveImage(images[0]);
                 }
-            } catch (err) {
-                console.error("Failed to fetch product data", err);
-            }
 
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                const { data } = await supabase
-                    .from('user_wishlist')
-                    .select('id')
-                    .eq('user_id', session.user.id)
-                    .eq('product_id', 'kalsa-spicemix-100g')
-                    .single();
+                // 4. Process Product Data
+                if (productRes.data) {
+                    const pData = productRes.data;
+                    setProductData(pData);
+                    
+                    const combinedImages: string[] = [];
+                    if (pData.main_image) combinedImages.push(pData.main_image);
+                    if (pData.images) combinedImages.push(...pData.images);
+                    combinedImages.push(...(images || []));
+                    
+                    const finalImages = Array.from(new Set(combinedImages.filter(Boolean)));
+                    setProductImages(finalImages);
+                    if (pData.main_image) setActiveImage(pData.main_image);
+                }
+
+                // 5. Process Wishlist
+                if (wishlistRes.data) {
+                    setIsInWishlist(true);
+                }
+            } else if (currentSession?.user) {
+                // Just check wishlist if we already have product data
+                const { data } = await supabase.from('user_wishlist').select('id').eq('user_id', currentSession.user.id).eq('product_id', 'kalsa-spicemix-100g').maybeSingle();
                 if (data) setIsInWishlist(true);
             }
         };
         fetchData();
-    }, [supabase]);
+    }, [supabase, lang, initialProductData, initialProductImages]);
 
-    const content = {
+    const componentContent = {
         en: {
             breadcrumb: "Kalsa Foods > Spices & Masalas",
-            name: "Kalsa foods 100% Natural Spice Mix Masala Powder 100gm",
-            fullName: "Spice Mix Masala | All-Purpose Indian Spice Blend | For Sabzi, Paneer & Curry | Rich Aroma & Authentic Taste | No Added Colors | 100g",
+            name: "Kalsa Foods Spice Mix Masala, Authentic Indian Spice Blend, Kitchen King Masala for Sabzi Paneer and Curry, No Added Colors, 100g",
+            fullName: "Kalsa Foods Spice Mix Masala, Authentic Indian Spice Blend, Kitchen King Masala for Sabzi Paneer and Curry, No Added Colors, 100g",
             tagline: "Experience the true taste of homemade goodness",
             aboutTitle: "About this item",
             vegText: "Vegetarian",
             qtyLabel: "Quantity:",
-            addBtn: `Add ${quantity} to Cart`,
+            addBtn: `Add ${quantity || 1} to Cart`,
             buyNowBtn: "Buy Now",
             infoTitle: "Product information",
             specTitle: "Specifications",
@@ -148,13 +230,13 @@ const ProductShowcase = () => {
         },
         hi: {
             breadcrumb: "कालसा फूड्स > मसाले",
-            name: "कालसा फूड्स 100% प्राकृतिक स्पाइस मिक्स मसाला पाउडर 100 ग्राम",
-            fullName: "स्पाइस मिक्स मसाला | सर्व-उद्देशीय भारतीय मसाला मिश्रण | सब्जी, पनीर और करी के लिए | भरपूर सुगंध और असली स्वाद | कोई अतिरिक्त रंग नहीं | 100ग्राम",
+            name: "कलसा फूड्स स्पाइस मिक्स मसाला, प्रमाणित भारतीय मसालों का मिश्रण, सब्जी पनीर और करी के लिए किचन किंग मसाला, कोई अतिरिक्त रंग नहीं, 100 ग्राम",
+            fullName: "कलसा फूड्स स्पाइस मिक्स मसाला, प्रमाणित भारतीय मसालों का मिश्रण, सब्जी पनीर और करी के लिए किचन किंग मसाला, कोई अतिरिक्त रंग नहीं, 100 ग्राम",
             tagline: "घर के बने खाने के असली स्वाद का अनुभव करें",
             aboutTitle: "इस आइटम के बारे में",
             vegText: "शाकाहारी",
             qtyLabel: "मात्रा:",
-            addBtn: `कार्ट में ${quantity} जोड़ें`,
+            addBtn: `कार्ट में ${quantity || 1} जोड़ें`,
             buyNowBtn: "अभी खरीदें",
             infoTitle: "उत्पाद की जानकारी",
             specTitle: "विशेष विवरण",
@@ -188,6 +270,7 @@ const ProductShowcase = () => {
         }
     };
 
+
     const t = productData ? {
         breadcrumb: productData[`breadcrumb_${lang}`],
         name: productData[`name_${lang}`],
@@ -211,7 +294,25 @@ const ProductShowcase = () => {
         mrp: productData.mrp,
         discountPercentage: productData.discount_percentage,
         pricePerUnit: productData[`unit_price_text_${lang}`]
-    } : { ...content[lang as keyof typeof content], price: 139, mrp: 179, discountPercentage: 22, pricePerUnit: "(₹139 /100 g)" };
+    } : { ...componentContent[lang as keyof typeof componentContent], price: 139, mrp: 179, discountPercentage: 22, pricePerUnit: "(₹139 /100 g)" };
+
+    const handleNextImage = () => {
+        if (!activeImage || productImages.length <= 1) return;
+        const currentIndex = productImages.indexOf(activeImage);
+        if (currentIndex > -1) {
+            const nextIndex = (currentIndex + 1) % productImages.length;
+            setActiveImage(productImages[nextIndex]);
+        }
+    };
+
+    const handlePrevImage = () => {
+        if (!activeImage || productImages.length <= 1) return;
+        const currentIndex = productImages.indexOf(activeImage);
+        if (currentIndex > -1) {
+            const prevIndex = currentIndex === 0 ? productImages.length - 1 : currentIndex - 1;
+            setActiveImage(productImages[prevIndex]);
+        }
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
         if (!containerRef.current) return;
@@ -235,29 +336,28 @@ const ProductShowcase = () => {
 
     const handleShare = async () => {
         try {
-            let filesArray: File[] = [];
-            if (activeImage) {
-                try {
-                    const response = await fetch(activeImage);
-                    const blob = await response.blob();
-                    const file = new File([blob], "product.png", { type: blob.type || 'image/png' });
-                    filesArray = [file];
-                } catch (e) {
-                    console.log("Error fetching image for share", e);
-                }
-            }
+            const fullTitle = componentContent[lang as Language].fullName;
             const shareData: ShareData = {
-                title: t.fullName,
-                text: `${t.fullName}\n${t.tagline}`,
+                title: fullTitle,
+                text: `${fullTitle}\n\nShop now:`,
                 url: window.location.href,
             };
-            if (filesArray.length > 0 && navigator.canShare && navigator.canShare({ files: filesArray })) {
-                shareData.files = filesArray;
+
+            // Track share in DB
+            try {
+                await supabase.from('product_shares').insert([{
+                    product_id: 'kalsa-spicemix-100g',
+                    product_name: t.name,
+                    platform: navigator.userAgent
+                }]);
+            } catch (err) {
+                console.log('Error tracking share', err);
             }
+
             if (navigator.share) {
                 await navigator.share(shareData);
             } else {
-                await navigator.clipboard.writeText(`${t.fullName}\n${window.location.href}`);
+                await navigator.clipboard.writeText(`${fullTitle}\n${window.location.href}`);
                 alert("Product link copied to clipboard!");
             }
         } catch (err) {
@@ -302,6 +402,154 @@ const ProductShowcase = () => {
         }
     };
 
+    const [reviewStats, setReviewStats] = useState({ 
+        average: initialReviewStats?.average || 0, 
+        count: initialReviewStats?.count || 0, 
+        breakdown: initialReviewStats?.breakdown || [0, 0, 0, 0, 0],
+        monthlySales: initialReviewStats?.monthlySales || 0 
+    });
+    const [isRatingOpen, setIsRatingOpen] = useState(false);
+
+    useEffect(() => {
+        if (!initialReviewStats) {
+            const fetchReviewStats = async () => {
+                // 1. Fetch Reviews
+                const { data: reviews } = await supabase
+                    .from('product_reviews')
+                    .select('rating')
+                    .eq('product_id', 'kalsa-spicemix-100g')
+                    .eq('is_approved', true);
+                
+                let avg = 0;
+                let counts = [0, 0, 0, 0, 0];
+                let total = 0;
+                
+                if (reviews && reviews.length > 0) {
+                    avg = reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length;
+                    total = reviews.length;
+                    reviews.forEach(r => {
+                        if (r.rating >= 1 && r.rating <= 5) counts[5 - r.rating]++;
+                    });
+                }
+
+                // 2. Fetch Monthly Sales (Last 30 days)
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                const { data: sales } = await supabase
+                    .from('order_items')
+                    .select('quantity, created_at')
+                    .eq('product_id', 'kalsa-spicemix-100g')
+                    .gte('created_at', thirtyDaysAgo.toISOString());
+                
+                const monthlyTotal = sales?.reduce((acc, curr) => acc + (curr.quantity || 1), 0) || 0;
+
+                const percentages = counts.map(c => total > 0 ? Math.round((c / total) * 100) : 0);
+                setReviewStats({ 
+                    average: avg, 
+                    count: total, 
+                    breakdown: percentages,
+                    monthlySales: monthlyTotal
+                });
+            };
+            fetchReviewStats();
+        }
+    }, [supabase, initialReviewStats]);
+
+    const scrollToReviews = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const element = document.getElementById('reviews');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const renderTitleSection = (isMobile: boolean) => (
+        <div className={isMobile ? styles.mobileTitleSec : styles.desktopTitleSec}>
+            <div className={styles.breadcrumb}>{t.breadcrumb}</div>
+            <div className={styles.titleWrapper}>
+                <div>
+                    <h1 className={styles.title}>{t.fullName}</h1>
+                    
+                    <div className={styles.ratingSummary}>
+                        <div 
+                            className={styles.ratingStars} 
+                            onMouseEnter={() => setIsRatingOpen(true)}
+                            onMouseLeave={() => setIsRatingOpen(false)}
+                            onClick={() => setIsRatingOpen(!isRatingOpen)}
+                        >
+                            <span className={styles.ratingNumber}>{reviewStats.average.toFixed(1)}</span>
+                            <div className={styles.starsRow}>
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                    <Star 
+                                        key={s} 
+                                        size={16} 
+                                        fill={s <= Math.round(reviewStats.average) ? "#ffa41c" : "none"} 
+                                        color={s <= Math.round(reviewStats.average) ? "#ffa41c" : "#ccc"} 
+                                    />
+                                ))}
+                            </div>
+                            <ChevronDown size={14} className={styles.ratingChevron} />
+
+                            {isRatingOpen && (
+                                <div className={styles.ratingPopover}>
+                                    <div className={styles.popoverHeader}>
+                                        <div className={styles.popoverStars}>
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <Star key={s} size={18} fill={s <= Math.round(reviewStats.average) ? "#ffa41c" : "none"} color={s <= Math.round(reviewStats.average) ? "#ffa41c" : "#ccc"} />
+                                            ))}
+                                        </div>
+                                        <span className={styles.popoverAvgText}>{reviewStats.average.toFixed(1)} out of 5</span>
+                                    </div>
+                                    <p className={styles.popoverTotalText}>{reviewStats.count.toLocaleString()} global ratings</p>
+                                    
+                                    <div className={styles.breakdownList}>
+                                        {reviewStats.breakdown.map((pct: number, idx: number) => (
+                                            <div key={idx} className={styles.breakdownRow}>
+                                                <span className={styles.starLabel}>{5 - idx} star</span>
+                                                <div className={styles.barContainer}>
+                                                    <div className={styles.barFill} style={{ width: `${pct}%` }}></div>
+                                                </div>
+                                                <span className={styles.pctLabel}>{pct}%</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className={styles.popoverFooter}>
+                                        <button onClick={scrollToReviews}>See customer reviews ›</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <a href="#reviews" onClick={scrollToReviews} className={styles.ratingCount}>
+                            {reviewStats.count.toLocaleString()} ratings
+                        </a>
+                        <span className={styles.ratingDivider}>|</span>
+                        <a href="#reviews" onClick={scrollToReviews} className={styles.ratingCount}>Search this page</a>
+                    </div>
+
+                    <div className={styles.amazonBadges}>
+                        <span className={styles.boughtText}>{reviewStats.monthlySales || '30'}+ bought in past month</span>
+                    </div>
+                </div>
+
+                <div className={styles.actionBtns}>
+                {user && (
+                    <button 
+                        onClick={handleToggleWishlist} 
+                        className={`${styles.wishlistBtn} ${isInWishlist ? styles.inWishlist : ''}`}
+                        aria-label="Add to Wishlist"
+                    >
+                        <Heart size={24} fill={isInWishlist ? "#ff4757" : "none"} color={isInWishlist ? "#ff4757" : "#555"} />
+                    </button>
+                )}
+                    <button onClick={handleShare} className={styles.shareBtn} aria-label="Share">
+                        <Share2 size={24} />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+
     if (!mounted || productImages.length === 0 || !activeImage) return null;
 
     return (
@@ -309,6 +557,7 @@ const ProductShowcase = () => {
             <div className="container">
                 <div className={styles.card}>
                     <div className={styles.grid}>
+                        {renderTitleSection(true)}
                         {/* Gallery Section */}
                         <div className={styles.gallery}>
                             <div className={styles.thumbnails}>
@@ -330,6 +579,16 @@ const ProductShowcase = () => {
                                 onMouseLeave={() => setIsZooming(false)}
                                 onMouseMove={handleMouseMove}
                             >
+                                {productImages.length > 1 && (
+                                    <>
+                                        <button className={`${styles.sliderBtn} ${styles.prevBtn}`} onClick={(e) => { e.stopPropagation(); handlePrevImage(); }} aria-label="Previous image">
+                                            <ChevronLeft size={24} />
+                                        </button>
+                                        <button className={`${styles.sliderBtn} ${styles.nextBtn}`} onClick={(e) => { e.stopPropagation(); handleNextImage(); }} aria-label="Next image">
+                                            <ChevronRight size={24} />
+                                        </button>
+                                    </>
+                                )}
                                 <Image
                                     src={activeImage}
                                     alt={t.name}
@@ -363,24 +622,7 @@ const ProductShowcase = () => {
 
                         {/* Details Section */}
                         <div className={styles.details}>
-                            <div className={styles.breadcrumb}>{t.breadcrumb}</div>
-                            <div className={styles.titleWrapper}>
-                                <h1 className={styles.title}>{t.fullName}</h1>
-                                <div className={styles.actionBtns}>
-                                {user && (
-                                    <button 
-                                        onClick={handleToggleWishlist} 
-                                        className={`${styles.wishlistBtn} ${isInWishlist ? styles.inWishlist : ''}`}
-                                        aria-label="Add to Wishlist"
-                                    >
-                                        <Heart size={24} fill={isInWishlist ? "#ff4757" : "none"} color={isInWishlist ? "#ff4757" : "#555"} />
-                                    </button>
-                                )}
-                                    <button onClick={handleShare} className={styles.shareBtn} aria-label="Share">
-                                        <Share2 size={24} />
-                                    </button>
-                                </div>
-                            </div>
+                            {renderTitleSection(false)}
 
                             <div className={styles.divider}></div>
 

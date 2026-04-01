@@ -7,22 +7,28 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './HeroSlider.module.css';
 import { getSliderImages } from '@/lib/actions';
 
-const HeroSlider = () => {
-    const [images, setImages] = useState<string[]>([]);
+interface HeroSliderProps {
+    initialImages?: string[];
+}
+
+const HeroSlider = ({ initialImages = [] }: HeroSliderProps) => {
+    const [images, setImages] = useState<string[]>(initialImages);
     const [current, setCurrent] = useState(0);
     const [direction, setDirection] = useState(0);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        const fetchImages = async () => {
-            const fetchedImages = await getSliderImages();
-            if (fetchedImages.length > 0) {
-                setImages(fetchedImages);
-            }
-        };
-        fetchImages();
-    }, []);
+        if (images.length === 0) {
+            const fetchImages = async () => {
+                const fetchedImages = await getSliderImages();
+                if (fetchedImages.length > 0) {
+                    setImages(fetchedImages);
+                }
+            };
+            fetchImages();
+        }
+    }, [images.length]);
 
     const slideNext = useCallback(() => {
         if (images.length === 0) return;

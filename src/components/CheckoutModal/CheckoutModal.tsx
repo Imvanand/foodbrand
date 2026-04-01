@@ -42,7 +42,9 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
             
             try {
                 const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
+                
+                // ONLY pre-fill if it's a regular customer, NOT the admin
+                if (session && session.user.email !== 'imvanand1@gmail.com') {
                     // Pre-fill user details
                     const userName = session.user.user_metadata?.full_name || '';
                     
@@ -139,7 +141,58 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
     const finalTotal = subtotal + deliveryCharge;
     const gstAmount = finalTotal - (finalTotal / 1.18); // GST included in price
 
+    const journeyRef = React.useRef<string | null>(null);
+
+    const logJourney = async (status: string, extra = {}) => {
+        try {
+            const res = await fetch('/api/checkout/journey', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: journeyRef.current,
+                    user_mobile: formData.phone,
+                    user_email: '', 
+                    items: [{ name: productName, qty: quantity, price }],
+                    amount: finalTotal,
+                    status,
+                    ...extra
+                })
+            });
+            const data = await res.json();
+            if (data.success && data.data?.id) {
+                journeyRef.current = data.data.id;
+            }
+            return data.data?.id || journeyRef.current;
+        } catch (e) {
+            console.error("Journey Log Error:", e);
+        }
+    };
+
+    const createAutoTicket = async (errorMsg: string, jId: string | null) => {
+        try {
+            const res = await fetch('/api/support/tickets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_mobile: formData.phone,
+                    subject: "Payment/Checkout Glitch Detected",
+                    description: `Automated Ticket: Customer encountered error during checkout. Error: ${errorMsg}`,
+                    priority: 'High',
+                    category: 'Payment',
+                    journey_id: jId
+                })
+            });
+            const data = await res.json();
+            return data.ticket?.id;
+        } catch (e) {
+            console.error("Ticket Creation Error:", e);
+        }
+    };
+
     const processOrder = async (paymentId: string) => {
+        // Update journey status immediately
+        await logJourney('Payment_Success', { razorpay_payment_id: paymentId });
+
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id || null;
@@ -197,9 +250,12 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
                     image: '/logo/logo.png'
                 }]);
 
+            // Final Journey Update
+            await logJourney('Order_Logged', { razorpay_payment_id: paymentId });
+
         } catch (dbError: any) {
             console.error("Database Save Failed:", dbError);
-            // Optionally alert the user, but since payment is done, we usually proceed
+            await logJourney('Failed_At_DB', { error_message: dbError.message });
         }
 
         // 2. Automation: Create Delhivery Order
@@ -221,7 +277,7 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
             });
             const dlvData = await dlvResponse.json();
             if (dlvData.success === false) {
-                alert(`Delhivery Sync Note: ${dlvData.rmk || 'Order saved to DB but sync delayed.'}`);
+                // alert(`Delhivery Sync Note: ${dlvData.rmk || 'Order saved to DB but sync delayed.'}`);
             }
         } catch (shippingError) {
             console.error("Shipping Automation Failed:", shippingError);
@@ -266,7 +322,7 @@ const CheckoutModal = ({ isOpen, onClose, productName, quantity, price }: Checko
 _Order via Razorpay_ ✅`;
 
         const whatsappNumber = "918709438350";
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
+        // const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
 
         // 3. Generate PDF Invoice
         try {
@@ -295,7 +351,9 @@ _Order via Razorpay_ ✅`;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Triggering Razorpay for amount:", finalTotal);
+        
+        // 0. Initial Journey Log
+        const currentJId = await logJourney('Initiated');
 
         try {
             // 1. Create Order on Server
@@ -309,16 +367,16 @@ _Order via Razorpay_ ✅`;
             });
 
             const order = await response.json();
-            console.log("Server Order Created:", order);
 
             if (!order.id) {
-                console.error("Order ID missing in server response:", order);
                 throw new Error('Order creation failed on server');
             }
 
+            // Update journey with Razorpay Order ID
+            await logJourney('Gateway_Ready', { razorpay_order_id: order.id });
+
             // 2. Open Razorpay Checkout
-            const key = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SVTkMuqXvzCE8B'; // Fallback for debugging
-            console.log("Using Razorpay Key:", key);
+            const key = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SVTkMuqXvzCE8B';
 
             const options = {
                 key: key,
@@ -329,7 +387,6 @@ _Order via Razorpay_ ✅`;
                 image: "/logo/logo.png",
                 order_id: order.id,
                 handler: function (response: any) {
-                    console.log("Payment Successful:", response);
                     processOrder(response.razorpay_payment_id);
                 },
                 prefill: {
@@ -338,27 +395,38 @@ _Order via Razorpay_ ✅`;
                 },
                 theme: {
                     color: "#232f3e"
+                },
+                modal: {
+                    ondismiss: async function() {
+                        await logJourney('Cancelled_By_User');
+                    }
                 }
             };
 
             if (!window.Razorpay) {
-                alert("Razorpay SDK not loaded yet. Please wait 1-2 seconds and try again.");
+                const tId = await createAutoTicket("Razorpay SDK Not Loaded", currentJId);
+                alert(`Network issue detected. Our team has been notified. Support Ticket: ${tId}. Please refresh and try again.`);
                 return;
             }
 
             const rzp = new window.Razorpay(options);
-            rzp.on('payment.failed', function (response: any) {
+            rzp.on('payment.failed', async function (response: any) {
                 console.error("Payment Failed Callback:", response.error);
-                alert("Payment Failed: " + response.error.description);
+                await logJourney('Payment_Failed', { error_message: response.error.description });
+                const tId = await createAutoTicket(response.error.description, currentJId);
+                alert(`Payment failed: ${response.error.description}. A support ticket ${tId} has been created for you.`);
             });
             
             rzp.open();
 
         } catch (error: any) {
             console.error('Checkout error:', error);
-            alert('Something went wrong: ' + error.message);
+            await logJourney('System_Error', { error_message: error.message });
+            const tId = await createAutoTicket(error.message, currentJId);
+            alert(`A connection glitch occurred. Please try again. Your support ticket ID is ${tId}.`);
         }
     };
+
 
     return (
         <div className={styles.overlay} onClick={onClose}>
@@ -417,6 +485,7 @@ _Order via Razorpay_ ✅`;
                         <input
                             type="text"
                             required
+                            autoComplete="off"
                             placeholder={t.form.namePlaceholder}
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -427,6 +496,7 @@ _Order via Razorpay_ ✅`;
                         <input
                             type="tel"
                             required
+                            autoComplete="off"
                             placeholder={t.form.phonePlaceholder}
                             value={formData.phone}
                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
@@ -436,6 +506,7 @@ _Order via Razorpay_ ✅`;
                         <label>{t.form.address}</label>
                         <textarea
                             required
+                            autoComplete="off"
                             placeholder={t.form.addrPlaceholder}
                             value={formData.address}
                             onChange={e => setFormData({ ...formData, address: e.target.value })}
@@ -446,6 +517,7 @@ _Order via Razorpay_ ✅`;
                         <input
                             type="text"
                             required
+                            autoComplete="off"
                             placeholder={t.form.pinPlaceholder}
                             value={formData.pincode}
                             onChange={e => setFormData({ ...formData, pincode: e.target.value })}

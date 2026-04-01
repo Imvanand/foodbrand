@@ -1,0 +1,24 @@
+name: Kalsa Automations
+
+on:
+  schedule:
+    # Runs every 4 hours (to sync Delhivery status)
+    - cron: '0 */4 * * *'
+    
+    # Runs once a day at 9:30 AM IST / 04:00 UTC (to send review reminders)
+    - cron: '0 4 * * *'
+  
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  automationTasks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync Delhivery Delivery Statuses
+        run: |
+          curl -f -X GET "https://kalsafoods.com/api/shipping/auto-sync?secret=kalsa-secure-sync-key"
+      
+      - name: Send Post-Delivery Review Reminders
+        run: |
+          curl -f -X POST "https://kalsafoods.com/api/reviews/reminders?secret=kalsa-secure-sync-key"

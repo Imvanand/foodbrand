@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { LayoutDashboard, ShoppingCart, Users, Package, Search, ExternalLink, Loader2, MapPin, Mail } from 'lucide-react';
+import { Search, ExternalLink, Loader2, MapPin, Mail, Users, UserCheck, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import styles from '../orders/admin.module.css';
 import Link from 'next/link';
+import AdminLayout from '@/components/AdminLayout/AdminLayout';
 
 export default function AdminCustomers() {
     const [customers, setCustomers] = useState<any[]>([]);
@@ -15,81 +16,37 @@ export default function AdminCustomers() {
 
     const fetchAllCustomers = async () => {
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
+        if (!session || session.user.email !== 'imvanand1@gmail.com') {
             router.push('/admin/login');
             return;
         }
 
-        if (session.user.email !== 'imvanand1@gmail.com') {
-            alert("Access Denied: You are not authorized to view the admin panel.");
-            router.push('/');
-            return;
-        }
-
-        // Fetch all registered users via secure RPC
-        const { data: usersData, error: usersError } = await supabase.rpc('get_all_users');
-        
         // Fetch user addresses representing extra customer info
-        const { data: addrData } = await supabase
+        const { data: addrData, error: addrError } = await supabase
             .from('user_addresses')
             .select('*')
             .order('created_at', { ascending: false });
 
-        const uniqueCustomersMap = new Map();
-
-        // 1. Add all registered users first
-        if (!usersError && usersData) {
-            usersData.forEach((u: any) => {
-                const phone = u.raw_user_meta_data?.phone || u.phone || 'N/A';
-                const name = u.raw_user_meta_data?.full_name || u.email;
-                uniqueCustomersMap.set(u.id, {
-                    id: u.id,
-                    user_id: u.id,
-                    full_name: name,
-                    phone: phone,
-                    email: u.email,
-                    city: 'Not provided',
-                    pincode: 'Not provided',
-                    flat_house: '',
-                    area_street: '',
-                    state: '',
-                    created_at: u.created_at,
-                    total_orders: 0
-                });
-            });
+        if (addrError) {
+            console.error('Error fetching customers:', addrError);
+            setLoading(false);
+            return;
         }
 
-        // 2. Enhance with address data or add guest checkouts
+        // De-duplicate by phone number to create a unique customer list
+        const uniqueCustomers: any[] = [];
+        const seenPhones = new Set();
+
         if (addrData) {
             addrData.forEach((addr: any) => {
-                if (addr.user_id && uniqueCustomersMap.has(addr.user_id)) {
-                    // Update existing user with their real location
-                    const existing = uniqueCustomersMap.get(addr.user_id);
-                    if (existing.city === 'Not provided') {
-                        existing.city = addr.city;
-                        existing.pincode = addr.pincode;
-                        existing.flat_house = addr.flat_house;
-                        existing.area_street = addr.area_street;
-                        existing.state = addr.state;
-                        // Better phone if they added it in address instead of profile
-                        if (existing.phone === 'N/A' && addr.phone) {
-                            existing.phone = addr.phone;
-                        }
-                    }
-                } else {
-                    // It's a guest checkout or address without auth mapping
-                    if (!uniqueCustomersMap.has(addr.phone)) {
-                        uniqueCustomersMap.set(addr.phone, {
-                            ...addr,
-                            user_id: null,
-                            total_orders: 0
-                        });
-                    }
+                if (!seenPhones.has(addr.phone)) {
+                    seenPhones.add(addr.phone);
+                    uniqueCustomers.push(addr);
                 }
             });
         }
         
-        setCustomers(Array.from(uniqueCustomersMap.values()));
+        setCustomers(uniqueCustomers);
         setLoading(false);
     };
 
@@ -98,111 +55,95 @@ export default function AdminCustomers() {
     }, [supabase]);
 
     if (loading) return (
-        <div className={styles.loadingContainer}>
-            <Loader2 className="animate-spin" size={48} color="#224b33" />
-            <p>Loading Customers List...</p>
+        <div style={{ padding: '100px', textAlign: 'center' }}>
+            <Loader2 className="animate-spin" size={40} color="#1c2b41" />
+            <p>Loading Customers...</p>
         </div>
     );
 
     return (
-        <div className={styles.adminLayout}>
-            {/* Sidebar */}
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <img src="/logo/logo.png" alt="Kalsa Admin" className={styles.adminLogo} />
-                    <span>Control Panel</span>
+        <AdminLayout title="Customer Directory">
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <div className={styles.statLabel}>Unique Customers</div>
+                    <div className={styles.statValue}>{customers.length}</div>
                 </div>
-                <nav className={styles.sideNav}>
-                    <Link href="/admin/orders" className={styles.navItem}>
-                        <ShoppingCart size={20} /> Orders
-                    </Link>
-                    <Link href="/admin/customers" className={`${styles.navItem} ${styles.active}`}>
-                        <Users size={20} /> Customers
-                    </Link>
-                    <Link href="/admin/products" className={styles.navItem}>
-                        <Package size={20} /> Inventory (Catalog)
-                    </Link>
-                    <Link href="/admin/tickets" className={styles.navItem}>
-                        <Mail size={20} /> Support Tickets
-                    </Link>
-                </nav>
-            </aside>
+                <div className={styles.statCard}>
+                    <div className={styles.statLabel}>Verified Accounts</div>
+                    <div className={styles.statValue}>{customers.filter(c => c.user_id).length}</div>
+                </div>
+                <div className={styles.statCard}>
+                    <div className={styles.statLabel}>Retention Strategy</div>
+                    <div className={styles.statValue} style={{color: '#3182ce'}}>8.4%</div>
+                </div>
+            </div>
 
-            {/* Main Content */}
-            <main className={styles.mainContent}>
-                <header className={styles.topHeader}>
-                    <h1>Customer Directory</h1>
-                    <div className={styles.userProfile}>
-                        <span>Admin Account</span>
-                        <div className={styles.avatar}>A</div>
-                    </div>
-                </header>
-
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Total Customers</div>
-                        <div className={styles.statValue}>{customers.length}</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Active Since</div>
-                        <div className={styles.statValue}>2026</div>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableActions} style={{flexWrap: 'wrap', gap: '10px'}}>
+                    <div className={styles.searchBar} style={{width: '100%', maxWidth: '400px'}}>
+                        <Search size={18} color="#777" />
+                        <input type="text" placeholder="Search by name or phone..." />
                     </div>
                 </div>
 
-                <div className={styles.tableContainer}>
-                    <div className={styles.tableActions}>
-                        <div className={styles.searchBar}>
-                            <Search size={18} />
-                            <input type="text" placeholder="Search by name or phone..." />
-                        </div>
-                    </div>
-
+                <div style={{overflowX: 'auto'}}>
                     <table className={styles.orderTable}>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Phone Number</th>
-                                <th>Location (City, PIN)</th>
-                                <th>Customer Type</th>
-                                <th>Registered Date</th>
-                                <th>Action</th>
+                                <th>Customer Name</th>
+                                <th>Contact Details</th>
+                                <th>Location</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {customers.map((cust, idx) => (
                                 <tr key={idx}>
-                                    <td><strong>{cust.full_name}</strong></td>
-                                    <td className={styles.orderIdCell}>{cust.phone}</td>
                                     <td>
-                                        <div className={styles.customerInfo} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                            <MapPin size={14} color="#718096" />
-                                            <span>{cust.city || 'N/A'}, {cust.pincode}</span>
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                                            <div style={{width: '32px', height: '32px', background: '#f1f5f9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontWeight: 600}}>
+                                                {cust.full_name?.charAt(0) || 'G'}
+                                            </div>
+                                            <strong style={{color: '#1c2b41'}}>{cust.full_name || 'Guest'}</strong>
                                         </div>
-                                        {cust.email && <div style={{ fontSize: '11px', color: '#565959', marginTop: '2px' }}>{cust.email}</div>}
                                     </td>
                                     <td>
-                                        <span className={`${styles.statusBadge} ${cust.user_id ? styles.delivered : styles.processing}`}>
-                                            {cust.user_id ? "Registered User" : "Guest Checkout"}
+                                        <div style={{fontSize: '0.85rem', fontWeight: 500}}>{cust.phone}</div>
+                                        <div style={{fontSize: '0.75rem', color: '#64748b'}}>{cust.email || 'No email provided'}</div>
+                                    </td>
+                                    <td>
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem'}}>
+                                            <MapPin size={12} color="#94a3b8" />
+                                            <span>{cust.city}, {cust.state}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style={{fontSize: '0.75rem', fontWeight: 600, color: cust.user_id ? '#2b6cb0' : '#4a5568'}}>
+                                            {cust.user_id ? 'Verified User' : 'One-time Guest'}
                                         </span>
                                     </td>
-                                    <td>{new Date(cust.created_at).toLocaleDateString()}</td>
                                     <td>
-                                        <button className={styles.viewDetailsBtn} onClick={() => alert(cust.flat_house ? `Address: ${cust.flat_house}, ${cust.area_street}\nState: ${cust.state}` : 'No address provided yet')}>
-                                            <ExternalLink size={16} /> View Address
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                                            <div style={{width: '6px', height: '6px', borderRadius: '50%', background: '#48bb78'}}></div>
+                                            <span style={{fontSize: '0.8rem', fontWeight: 500}}>Active</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button className={styles.viewDetailsBtn} onClick={() => alert(`Full Address:\n${cust.flat_house}, ${cust.area_street}\n${cust.city}, ${cust.state} - ${cust.pincode}`)}>
+                                            <ExternalLink size={14} />
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-                    {customers.length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '30px', color: '#718096' }}>
-                            No customers found yet. Dummy data might have been cleared.
-                        </div>
-                    )}
                 </div>
-            </main>
-        </div>
+                {customers.length === 0 && (
+                    <div style={{padding: '50px', textAlign: 'center', color: '#64748b'}}>No customers found in directory.</div>
+                )}
+            </div>
+        </AdminLayout>
     );
 }

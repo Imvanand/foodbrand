@@ -23,102 +23,214 @@
   margin: 0 auto;
 }
 
-.reviewsGrid {
+.mainGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
+  grid-template-columns: 350px 1fr;
+  gap: 60px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
-.reviewCard {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.summaryCard {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.avgRatingBlock {
+  margin-bottom: 30px;
+}
+
+.avgNumber {
+  font-size: 48px;
+  font-weight: 700;
+  color: #224b33;
+  line-height: 1;
+}
+
+.avgStars {
   display: flex;
-  flex-direction: column;
-  position: relative;
+  gap: 5px;
+  margin: 10px 0;
 }
 
-.reviewCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+.totalCount {
+  font-size: 16px;
+  color: #666;
 }
 
-.stars {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+.histogram {
+  margin-bottom: 40px;
 }
 
-.starFilled {
-  color: #fbbf24;
-}
-
-.starEmpty {
-  color: #e5e7eb;
-}
-
-.reviewText {
-  font-size: 1.1rem;
-  color: var(--color-text-primary, #333);
-  line-height: 1.6;
-  font-style: italic;
-  margin-bottom: 2rem;
-  flex-grow: 1;
-}
-
-.authorSection {
+.histoRow {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  border-top: 1px solid #eee;
-  padding-top: 1.5rem;
+  gap: 15px;
+  margin-bottom: 12px;
 }
 
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-primary, #e25e3e);
-  color: white;
+.histoLabel {
+  width: 50px;
+  font-size: 14px;
+  color: #007185;
+}
+
+.barContainer {
+  flex-grow: 1;
+  height: 20px;
+  background-color: #f0f2f2;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.barFill {
+  height: 100%;
+  background-color: #f0c14b;
+  border-radius: 4px;
+}
+
+.histoPercent {
+  width: 40px;
+  font-size: 14px;
+  color: #007185;
+  text-align: right;
+}
+
+.writeReviewBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  font-weight: bold;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  background: white;
+  border: 1px solid #d5d9d9;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #0f1111;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(213,217,217,.5);
 }
 
-.authorInfo {
+.writeReviewBtn:hover {
+  background-color: #f7fafa;
+  border-color: #adb1b8;
+}
+
+/* Review List */
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.reviewCard {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 30px;
+}
+
+.reviewerHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  background: #f0f2f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.reviewerInfo {
   display: flex;
   flex-direction: column;
 }
 
-.authorName {
+.reviewerName {
+  font-weight: 500;
+  font-size: 14px;
+  color: #0f1111;
+}
+
+.verifiedBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #c45500;
   font-weight: 700;
-  color: var(--color-text-primary, #333);
-  font-size: 1rem;
-  margin: 0;
 }
 
-.date {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary, #999);
-  margin-top: 0.25rem;
+.reviewStars {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
-  .reviewsSection {
-    padding: 4rem 0;
-  }
-  
-  .title {
-    font-size: 2rem;
-  }
-  
-  .reviewsGrid {
+.reviewDate {
+  font-size: 14px;
+  color: #565959;
+}
+
+.reviewTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f1111;
+  margin-bottom: 10px;
+}
+
+.reviewContent {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #0f1111;
+}
+
+.reviewImages {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.reviewPhoto {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.loading, .noReviews {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 1024px) {
+  .mainGrid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 40px;
+  }
+  
+  .summaryCard {
+    position: static;
+    max-width: 400px;
   }
 }
+

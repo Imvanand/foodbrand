@@ -18,9 +18,15 @@ interface InvoiceData {
     orderId: string;
 }
 
-const loadImage = (url: string): Promise<HTMLImageElement> => {
+const loadImage = (url: string): Promise<any> => {
     return new Promise((resolve, reject) => {
+        if (typeof window === 'undefined') {
+            // Server-side: Logo as empty placeholder or fetch placeholder
+            resolve(null);
+            return;
+        }
         const img = new Image();
+        img.crossOrigin = "Anonymous";
         img.onload = () => resolve(img);
         img.onerror = (e) => reject(e);
         img.src = url;
@@ -194,6 +200,18 @@ export const generateInvoicePDF = async (data: InvoiceData) => {
     doc.setTextColor(100, 100, 100);
     doc.text('Thank you for your order!', 105, 285, { align: 'center' });
 
-    // Download the PDF
-    doc.save(`Invoice_${data.orderId}.pdf`);
+    // Download or Return
+    if (typeof window !== 'undefined') {
+        doc.save(`Invoice_${data.orderId}.pdf`);
+    } else {
+        return doc.output('arraybuffer');
+    }
+};
+
+/**
+ * Server-side version specifically for Email Attachments
+ */
+export const getInvoicePDFBuffer = async (data: InvoiceData) => {
+    // Re-use logic but return buffer
+    return await generateInvoicePDF(data);
 };

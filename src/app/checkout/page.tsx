@@ -24,6 +24,7 @@ export default function CheckoutPage() {
     const [isGuest, setIsGuest] = useState(false);
     const [isLocating, setIsLocating] = useState(false);
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+    const journeyRef = React.useRef<string | null>(null);
     const [guestInfo, setGuestInfo] = useState({
         name: '',
         phone: '',
@@ -48,15 +49,18 @@ export default function CheckoutPage() {
     useEffect(() => {
         const init = async () => {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
+            
+            // Treat Admin as a Guest on the storefront
+            if (!session || session.user.email === 'imvanand1@gmail.com') {
                 setUser(null);
                 setIsGuest(true);
                 setLoading(false);
                 return;
             }
+            
             setUser(session.user);
             
-            // Fetch addresses
+            // Fetch addresses for regular users
             const { data: addrData } = await supabase
                 .from('user_addresses')
                 .select('*')
@@ -152,6 +156,56 @@ export default function CheckoutPage() {
         
         setFormErrors(newErrors);
     };
+    
+    // --- Journey Logging Helpers ---
+    const logJourney = async (status: string, extra: any = {}) => {
+        try {
+            const body = {
+                id: journeyRef.current,
+                user_mobile: guestInfo.phone || user?.phone || 'Anon',
+                user_email: guestInfo.email || user?.email || '',
+                items: cart.map(i => ({ name: i.name, qty: i.quantity, price: i.price })),
+                amount: total,
+                status,
+                ...extra
+            };
+
+            const res = await fetch('/api/checkout/journey', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.success && data.data?.id) {
+                journeyRef.current = data.data.id;
+            }
+            return data.data?.id || journeyRef.current;
+        } catch (e) {
+            console.error("Journey Log Failed:", e);
+        }
+    };
+
+    const createAutoTicket = async (err: string, jId: string | null) => {
+        try {
+            const res = await fetch('/api/support/tickets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_name: guestInfo.name || user?.user_metadata?.full_name || 'Guest',
+                    customer_mobile: guestInfo.phone || user?.phone || 'Anon',
+                    subject: 'Auto-Failed Checkout',
+                    message: `System caught a failure. Error: ${err}. Journey ID: ${jId || 'Unknown'}`,
+                    priority: 'high',
+                    journey_id: jId
+                })
+            });
+            const data = await res.json();
+            return data.data?.ticket_id || 'TICKET-ERR';
+        } catch (e) {
+            return 'TICKET-ERR';
+        }
+    };
+    // ------------------------------
 
     const handlePlaceOrder = async () => {
         const errors = getFormErrors();
@@ -164,6 +218,8 @@ export default function CheckoutPage() {
         }
 
         setIsPlacingOrder(true);
+        const currentJId = await logJourney('Initiated');
+
         try {
             const { data: { session } } = await supabase.auth.getSession();
             const currentUserId = session?.user?.id || null;
@@ -180,7 +236,12 @@ export default function CheckoutPage() {
                 });
 
                 const rzpOrder = await razorpayResponse.json();
-                if (!rzpOrder.id) throw new Error('Razorpay order creation failed');
+                if (!rzpOrder.id) {
+                    await logJourney('System_Error', { error_message: 'Razorpay order creation failed' });
+                    throw new Error('Razorpay order creation failed');
+                }
+
+                await logJourney('Gateway_Ready', { razorpay_order_id: rzpOrder.id });
 
                 const options = {
                     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -191,7 +252,13 @@ export default function CheckoutPage() {
                     image: "/logo/logo.png",
                     order_id: rzpOrder.id,
                     handler: async function (response: any) {
+                        await logJourney('Payment_Success', { razorpay_payment_id: response.razorpay_payment_id });
                         await finalizeOrder(currentUserId, response.razorpay_payment_id);
+                    },
+                    modal: {
+                        ondismiss: async function() {
+                            await logJourney('Cancelled_By_User');
+                        }
                     },
                     prefill: {
                         name: user ? (user.user_metadata?.full_name || user.email.split('@')[0]) : guestInfo.name,
@@ -204,16 +271,27 @@ export default function CheckoutPage() {
                 };
 
                 const rzp = new window.Razorpay(options);
+                
+                rzp.on('payment.failed', async function (response: any) {
+                    console.error("Payment Failed Callback:", response.error);
+                    await logJourney('Payment_Failed', { error_message: response.error.description });
+                    const tId = await createAutoTicket(response.error.description, journeyRef.current);
+                    alert(`Payment failed: ${response.error.description}. A ticket ${tId} has been created.`);
+                });
+
                 rzp.open();
                 setIsPlacingOrder(false);
             } else {
                 // Cash on Delivery
+                await logJourney('COD_Selected');
                 await finalizeOrder(currentUserId, 'COD');
             }
 
         } catch (err: any) {
             console.error("Order error:", err);
-            alert("Failed to place order: " + err.message);
+            await logJourney('System_Error', { error_message: err.message });
+            const tId = await createAutoTicket(err.message, journeyRef.current);
+            alert(`Failed to place order: ${err.message}. Ticket ID: ${tId}`);
             setIsPlacingOrder(false);
         }
     };
@@ -358,6 +436,7 @@ export default function CheckoutPage() {
                         orderId: `KF-${order.id.slice(0, 8).toUpperCase()}`,
                         customerName: buyerName,
                         customerEmail: buyerEmail,
+                        customerPhone: buyerPhone,
                         products: cart,
                         totalAmount: total,
                         shippingAddress: buyerAddress,

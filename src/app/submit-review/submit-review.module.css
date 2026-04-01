@@ -1,0 +1,362 @@
+.verifyContainer, .productSelectContainer, .reviewFormContainer, .successContainer {
+    min-height: 100vh;
+    background-color: #f8fbf9;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Outfit', sans-serif;
+}
+
+.verifyCard, .card, .formCard {
+    background: #ffffff;
+    padding: 50px;
+    border-radius: 28px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+    max-width: 550px;
+    width: 100%;
+}
+
+.formCard {
+    max-width: 800px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo {
+    height: 50px;
+    margin-bottom: 20px;
+    object-fit: contain;
+}
+
+.header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: #224b33;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.header p {
+    color: #666;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.orDivider {
+    text-align: center;
+    margin: 35px 0;
+    position: relative;
+    color: #999;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.orDivider span {
+    background: #fff;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.orDivider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: #eee;
+    left: 0;
+    z-index: 1;
+}
+
+.formGroup {
+    margin-bottom: 25px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #224b33;
+    z-index: 10;
+}
+
+.inputWrapper input, .formGroup input, .formGroup textarea {
+    width: 100%;
+    padding: 18px 20px 18px 55px !important;
+    border: 1.5px solid #eee;
+    border-radius: 16px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #fbfbfc;
+}
+
+.formGroup input, .formGroup textarea {
+    padding-left: 15px;
+}
+
+.inputWrapper input:focus, .formGroup input:focus, .formGroup textarea:focus {
+    border-color: #224b33;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(34, 75, 51, 0.1);
+}
+
+.verifyBtn, .submitBtn {
+    width: 100%;
+    padding: 18px;
+    background-color: #224b33;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.verifyBtn:disabled, .submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.errorMsg {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-bottom: 15px;
+    text-align: center;
+    background: #ffebee;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.footerNote {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #888;
+}
+
+/* Product Selection */
+.productList {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.productItem {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.productItem:hover {
+    background-color: #f9f9f9;
+    border-color: #224b33;
+}
+
+.productItem img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.productInfo h3 {
+    font-size: 16px;
+    margin: 0;
+    color: #224b33;
+}
+
+.productInfo p {
+    font-size: 13px;
+    color: #888;
+    margin: 3px 0 0;
+}
+
+.selectBtn {
+    margin-left: auto;
+    background: #f0c14b;
+    border: 1px solid #a88734;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Review Form Detail */
+.productHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 20px;
+}
+
+.productHeader img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+}
+
+.productHeader h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.starSection {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.starRating {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.star {
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.star.filled {
+    color: #f0c14b;
+    fill: #f0c14b;
+}
+
+.star:hover {
+    transform: scale(1.1);
+}
+
+.previewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.previewItem {
+    position: relative;
+    aspect-ratio: 1;
+}
+
+.previewItem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.removeBtn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.removeBtn:hover {
+    transform: scale(1.1);
+}
+
+.uploadSection {
+    margin-bottom: 30px;
+}
+
+.uploadBox {
+    border: 2px dashed #ddd;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.uploadBox:hover {
+    border-color: #224b33;
+    background: #f8fbf9;
+}
+
+.uploadInfo {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #999;
+}
+
+.backBtn {
+    background: none;
+    border: none;
+    color: #224b33;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.successContainer .card {
+    text-align: center;
+}
+
+.btnPrimaryLink {
+    padding: 15px 30px;
+    background-color: #224b33;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btnSecondary {
+    padding: 15px 30px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}

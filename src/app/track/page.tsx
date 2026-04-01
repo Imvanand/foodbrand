@@ -12,24 +12,30 @@ export default function TrackPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleTrack = async (e?: React.FormEvent) => {
+    const [fullData, setFullData] = useState<any>(null);
+
+    const handleTrack = async (e?: React.FormEvent, forceId?: string) => {
         if (e) e.preventDefault();
-        if (!searchQuery) return;
+        const idToTrack = forceId || searchQuery.trim();
+        if (!idToTrack) return;
 
         setLoading(true);
         setError('');
-        setTrackingData(null);
+        // Don't clear trackingData if we are switching between same phone's orders
+        if (!forceId) {
+            setTrackingData(null);
+            setFullData(null);
+        }
 
         try {
             // Smart detection
             let param = '';
-            const query = searchQuery.trim();
-            if (query.startsWith('KF-')) {
-                param = `id=${query}`;
-            } else if (/^\d{10}$/.test(query)) {
-                param = `phone=${query}`;
+            if (idToTrack.startsWith('KF-')) {
+                param = `id=${idToTrack}`;
+            } else if (/^\d{10}$/.test(idToTrack)) {
+                param = `phone=${idToTrack}`;
             } else {
-                param = `waybill=${query}`;
+                param = `waybill=${idToTrack}`;
             }
 
             const res = await fetch(`/api/shipping/track-order?${param}`);
@@ -37,8 +43,9 @@ export default function TrackPage() {
 
             if (data?.ShipmentData?.[0]?.Shipment) {
                 setTrackingData(data.ShipmentData[0].Shipment);
+                setFullData(data);
             } else {
-                setError("No shipment found. Please double-check your Order ID or Tracking Number.");
+                setError("No shipment found. Please double-check your Order ID (KF-XXXXX) or Registered Mobile Number.");
             }
         } catch (err) {
             setError("Something went wrong. Please try again later.");
@@ -53,7 +60,6 @@ export default function TrackPage() {
         const q = urlParams.get('q');
         if (q) {
             setSearchQuery(q);
-            // Wait for searchQuery to be update then track
         }
     }, []);
 
@@ -69,12 +75,12 @@ export default function TrackPage() {
             <main className={styles.container}>
                 <div className={styles.hero}>
                     <h1>Track Your Shipment</h1>
-                    <p>Enter your Order ID (e.g. KF-XXXXX) or Delhivery Waybill number to see live updates.</p>
+                    <p>Enter your Order ID (KF-XXXXX) or Registered Mobile Number to see live updates.</p>
                     <form className={styles.searchBox} onSubmit={handleTrack}>
                         <Search size={22} color="#777" />
                         <input 
                             type="text" 
-                            placeholder="Order ID / Tracking ID" 
+                            placeholder="Order ID / Mobile Number" 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
                         />
@@ -86,21 +92,59 @@ export default function TrackPage() {
 
                 {error && <div className={styles.errorBox}>{error}</div>}
 
+                {/* Multiple Orders Scenarios */}
+                {fullData?.allOrders && fullData.allOrders.length > 1 && (
+                    <div className={styles.orderSelector}>
+                        <p className={styles.selectorHint}>We found {fullData.allOrders.length} orders for this number. Select one to track:</p>
+                        <div className={styles.selectorGrid}>
+                            {fullData.allOrders.map((ord: any) => (
+                                <button 
+                                    key={ord.id} 
+                                    className={`${styles.selectorBtn} ${fullData.orderId === ord.id ? styles.selected : ''}`}
+                                    onClick={() => handleTrack(undefined, ord.id)}
+                                >
+                                    <span className={styles.ordId}>{ord.id}</span>
+                                    <span className={styles.ordDate}>{new Date(ord.date).toLocaleDateString()}</span>
+                                    <span className={`${styles.statusBadge} ${ord.status.toLowerCase()}`}>{ord.status}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {trackingData && (
                     <div className={styles.trackingResult}>
                         <div className={styles.card}>
                             <div className={styles.cardHeader}>
                                 <div>
-                                    <span className={styles.label}>TRACKING ID:</span>
-                                    <span className={styles.value}>{trackingData.Waybill}</span>
+                                    <span className={styles.label}>ORDER ID:</span>
+                                    <span className={styles.value}>{fullData?.orderId || trackingData.ReferenceNo}</span>
                                 </div>
                                 <div>
-                                    <span className={styles.label}>STATUS:</span>
-                                    <span className={`${styles.statusPill} ${styles[trackingData.Status?.Status?.toLowerCase()]}`}>
+                                    <span className={styles.label}>SHIPPING STATUS:</span>
+                                    <span className={`${styles.statusPill} ${styles[trackingData.Status?.Status?.toLowerCase().replace(/\s/g, '_')]}`}>
                                         {trackingData.Status?.Status || "Order Placed"}
                                     </span>
                                 </div>
                             </div>
+
+                            {/* Order Items Section */}
+                            {fullData?.orderItems && fullData.orderItems.length > 0 && (
+                                <div className={styles.orderItemsSec}>
+                                    <h4 className={styles.secTitle}>Items in this order:</h4>
+                                    <div className={styles.itemsList}>
+                                        {fullData.orderItems.map((item: any, idx: number) => (
+                                            <div key={idx} className={styles.itemRow}>
+                                                {item.image && <img src={item.image} alt={item.name} className={styles.itemImg} />}
+                                                <div className={styles.itemInfo}>
+                                                    <p className={styles.itemName}>{item.name}</p>
+                                                    <p className={styles.itemQty}>Quantity: {item.quantity}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className={styles.timeline}>
                                 <div className={styles.event}>
@@ -133,6 +177,10 @@ export default function TrackPage() {
                                 <div className={styles.detailItem}>
                                     <span className={styles.label}>Expected Delivery</span>
                                     <span className={styles.value}>{trackingData.ExpectedDeliveryDate ? new Date(trackingData.ExpectedDeliveryDate).toLocaleDateString() : "Pending"}</span>
+                                </div>
+                                <div className={styles.detailItem}>
+                                    <span className={styles.label}>Waybill Number</span>
+                                    <span className={styles.value}>{trackingData.Waybill !== "NOT_SYNCED_YET" ? trackingData.Waybill : "Being Assigned"}</span>
                                 </div>
                             </div>
                         </div>

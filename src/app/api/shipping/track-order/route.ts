@@ -14,27 +14,48 @@ export async function GET(req: Request) {
 
     try {
         let finalWaybill = waybill;
-        let supabaseOrder = null;
+        let supabaseOrder: any = null;
+        let supabaseOrders: any[] = [];
         const supabase = await createClient();
 
         if (inputOrderId && inputOrderId.startsWith('KF-')) {
             const hexPart = inputOrderId.replace('KF-', '').toLowerCase();
             const { data: ordersData } = await supabase.from('orders').select('*');
-            supabaseOrder = ordersData?.find(o => o.id.replace(/-/g, '').startsWith(hexPart.replace(/-/g, '')));
+            const found = ordersData?.find(o => o.id.replace(/-/g, '').startsWith(hexPart.replace(/-/g, '')));
+            if (found) supabaseOrders = [found];
         } else if (phone) {
             // Find address with this phone
             const { data: addresses } = await supabase.from('user_addresses').select('id').eq('phone', phone);
             if (addresses && addresses.length > 0) {
                 const addressIds = addresses.map(a => a.id);
-                // Get most recent order for these addresses
+                // Get last 3 orders for these addresses
                 const { data: orders } = await supabase
                     .from('orders')
                     .select('*')
                     .in('address_id', addressIds)
                     .order('created_at', { ascending: false })
-                    .limit(1);
-                if (orders && orders.length > 0) supabaseOrder = orders[0];
+                    .limit(5);
+                supabaseOrders = orders || [];
             }
+        }
+
+        if (supabaseOrders.length === 0 && !waybill && !inputOrderId) {
+             return NextResponse.json({ success: false, error: 'No matching order found' }, { status: 404 });
+        }
+
+        // If we have multiple orders from a phone lookup, we might want to return them as a list
+        // However, for the primary tracking, we'll auto-select the most recent one 
+        // BUT we'll send the list back so the frontend can show a selector if needed.
+        supabaseOrder = supabaseOrders[0];
+
+        // Fetch Order Items if we have a supabaseOrder
+        let orderItems: any[] = [];
+        if (supabaseOrder) {
+            const { data: items } = await supabase
+                .from('order_items')
+                .select('*')
+                .eq('order_id', supabaseOrder.id);
+            orderItems = items || [];
         }
 
         if (supabaseOrder && supabaseOrder.waybill) {
@@ -42,13 +63,14 @@ export async function GET(req: Request) {
         }
 
         // 2. Fetch from Delhivery
-        let delhiveryData = { ShipmentData: [] };
-        if (finalWaybill || inputOrderId) {
+        let delhiveryData: any = { ShipmentData: [] };
+        if (finalWaybill || (supabaseOrder && supabaseOrder.id)) {
+            const refId = (supabaseOrder ? `KF-${supabaseOrder.id.slice(0, 8).toUpperCase()}` : null);
             let url = `https://track.delhivery.com/api/v1/packages/json/`;
             if (finalWaybill) {
                 url += `?waybill=${finalWaybill}`;
-            } else {
-                url += `?ref_ids=${inputOrderId}`;
+            } else if (refId) {
+                url += `?ref_ids=${refId}`;
             }
 
             const response = await fetch(url, {
@@ -59,6 +81,16 @@ export async function GET(req: Request) {
                 }
             });
             delhiveryData = await response.json();
+            // Add items and the full list of orders to delhiveryData for frontend
+            delhiveryData.orderItems = orderItems;
+            delhiveryData.orderId = supabaseOrder ? `KF-${supabaseOrder.id.slice(0, 8).toUpperCase()}` : (inputOrderId || "N/A");
+            delhiveryData.allOrders = supabaseOrders.map(o => ({
+                id: `KF-${o.id.slice(0, 8).toUpperCase()}`,
+                fullId: o.id,
+                date: o.created_at,
+                status: o.status || 'Processing',
+                waybill: o.waybill
+            }));
         }
 
         // 3. Merge Results: If Delhivery has no data but Supabase has the order
@@ -67,10 +99,12 @@ export async function GET(req: Request) {
              return NextResponse.json({
                 success: true,
                 isSupabaseOnly: true,
+                orderItems,
+                orderId: `KF-${supabaseOrder.id.slice(0, 8).toUpperCase()}`,
                 ShipmentData: [{
                     Shipment: {
                         Waybill: "NOT_SYNCED_YET",
-                        ReferenceNo: inputOrderId,
+                        ReferenceNo: inputOrderId || `KF-${supabaseOrder.id.slice(0, 8).toUpperCase()}`,
                         Status: {
                             Status: "Processing (Order Received)",
                             StatusDateTime: supabaseOrder.created_at,

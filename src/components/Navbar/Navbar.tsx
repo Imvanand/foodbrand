@@ -84,6 +84,7 @@ const Navbar = () => {
         { title: lang === 'hi' ? "रेसिपे" : "Recipes", href: "/recipes", hasDropdown: false },
         { title: lang === 'hi' ? "ऑर्डर कैसे करें" : "How to Order", href: "/how-to-order", hasDropdown: false },
         { title: lang === 'hi' ? "हमारी कहानी" : "What's the Story", href: "/our-story", hasDropdown: false },
+        { title: lang === 'hi' ? "समीक्षा दें" : "Submit Review", href: "/submit-review", hasDropdown: false },
         {
             title: lang === 'hi' ? "संपर्क करें" : "Contact us",
             href: "/contact",
@@ -114,7 +115,7 @@ const Navbar = () => {
                             </Link>
                         </div>
 
-                        {user && (
+                        {user && user.email !== 'imvanand1@gmail.com' && (
                             <Link href="/profile/addresses" className={styles.locationWidget}>
                                 <MapPin size={18} strokeWidth={1.5} className={styles.locationIcon} color="#333" />
                                 <div className={styles.locationText}>
@@ -149,7 +150,7 @@ const Navbar = () => {
                             <button className={`${styles.langBtn} ${lang === 'hi' ? styles.activeLang : ''}`} onClick={() => setLang('hi')}>हिं</button>
                         </div>
                         
-                        {user && (
+                        {user && user.email !== 'imvanand1@gmail.com' && (
                             <div className={`${styles.accountContainer} ${styles.hasDropdown}`}>
                                 <Link href="/profile" className={styles.accountToggle}>
                                     <div className={styles.accountTextContainer}>
@@ -256,7 +257,7 @@ const Navbar = () => {
                 <div className={styles.mobileLangSwitcher}>
                     <button className={`${styles.langBtn} ${lang === 'en' ? styles.activeLang : ''}`} onClick={() => setLang('en')}>English (EN)</button>
                     <button className={`${styles.langBtn} ${lang === 'hi' ? styles.activeLang : ''}`} onClick={() => setLang('hi')}>हिन्दी (HI)</button>
-                    {user && (
+                    {user && user.email !== 'imvanand1@gmail.com' && (
                         <>
                             <Link href="/profile" className={styles.langBtn} onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#f39c12', fontWeight: 700, marginTop: '10px' }}>My Profile</Link>
                             <button onClick={async () => { await supabase.auth.signOut(); setIsMobileMenuOpen(false); window.location.href = '/'; }} className={styles.langBtn} style={{ color: '#ef4444', fontWeight: 700, marginTop: '10px', textAlign: 'left', border: 'none', background: 'none' }}>Logout</button>
