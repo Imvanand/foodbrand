@@ -81,12 +81,8 @@ export async function getProductImages() {
 
 
 
-        // Map to public URLs with cache busting
-        return imageFiles.map(fileName => {
-            const filePath = path.join(imagesDirectory, fileName);
-            const stats = fs.statSync(filePath);
-            return `/Product_images/${fileName}?v=${stats.mtimeMs}`;
-        });
+        // Map to public URLs (Next.js automatically handles caching/optimization)
+        return imageFiles.map(fileName => `/Product_images/${fileName}`);
     } catch (error) {
         console.error("Error reading product images directory:", error);
         return [];
@@ -109,11 +105,7 @@ export async function getSliderImages() {
                 && !fileName.startsWith('.');
         });
 
-        return imageFiles.map(fileName => {
-            const filePath = path.join(imagesDirectory, fileName);
-            const stats = fs.statSync(filePath);
-            return `/Slider/${fileName}?v=${stats.mtimeMs}`;
-        });
+        return imageFiles.map(fileName => `/Slider/${fileName}`);
     } catch (error) {
         console.error("Error reading slider images directory:", error);
         return [];
