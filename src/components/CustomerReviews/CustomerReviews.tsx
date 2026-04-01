@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './CustomerReviews.module.css';
 import { useLanguage } from '@/context/LanguageContext';
 import { createClient } from '@/utils/supabase/client';
-import { Star, CheckCircle2, PenLine } from 'lucide-react';
+import { Star, CheckCircle2, PenLine, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface Review {
@@ -24,6 +24,7 @@ export default function CustomerReviews({ initialReviews = [] }: CustomerReviews
   const { lang } = useLanguage();
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [loading, setLoading] = useState(initialReviews.length === 0);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -116,7 +117,6 @@ export default function CustomerReviews({ initialReviews = [] }: CustomerReviews
             </Link>
           </div>
 
-          {/* Review List */}
           <div className={styles.reviewsList}>
             {loading ? (
               <div className={styles.loading}>Loading reviews...</div>
@@ -146,7 +146,13 @@ export default function CustomerReviews({ initialReviews = [] }: CustomerReviews
                         color={i < review.rating ? "#fbbf24" : "#e5e7eb"} 
                       />
                     ))}
-                    <span className={styles.reviewDate}>{new Date(review.created_at).toLocaleDateString()}</span>
+                    <span className={styles.reviewDate}>
+                      {new Date(review.created_at).toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </span>
                   </div>
 
                   <h3 className={styles.reviewTitle}>{review.title}</h3>
@@ -155,7 +161,13 @@ export default function CustomerReviews({ initialReviews = [] }: CustomerReviews
                   {review.images && review.images.length > 0 && (
                     <div className={styles.reviewImages}>
                       {review.images.map((img, i) => (
-                        <img key={i} src={img} alt={`review-${i}`} className={styles.reviewPhoto} />
+                        <img 
+                          key={i} 
+                          src={img} 
+                          alt={`review-${i}`} 
+                          className={styles.reviewPhoto} 
+                          onClick={() => setActiveImage(img)}
+                        />
                       ))}
                     </div>
                   )}
@@ -165,6 +177,17 @@ export default function CustomerReviews({ initialReviews = [] }: CustomerReviews
           </div>
         </div>
       </div>
+
+      {activeImage && (
+        <div className={styles.lightbox} onClick={() => setActiveImage(null)}>
+          <button className={styles.closeBtn} onClick={() => setActiveImage(null)}>
+            <X size={32} />
+          </button>
+          <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+            <img src={activeImage} alt="Enlarged Review" />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

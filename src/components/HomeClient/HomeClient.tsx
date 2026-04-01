@@ -97,11 +97,13 @@ export default function HomeClient({ data }: HomeClientProps) {
         </div>
       </div>
 
-      <ProductShowcase 
-        initialProductImages={data.productImages} 
-        initialProductData={data.productData}
+      <div id="products">
+        <ProductShowcase 
+          initialProductImages={data.productImages} 
+          initialProductData={data.productData}
         initialReviewStats={data.reviewStats}
-      />
+        />
+      </div>
       
       <div id="reviews">
         <CustomerReviews initialReviews={data.reviews} />

@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: "Kalsa Foods",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://kalsafoods.com/Front.png",
         width: 1200,
         height: 630,
         alt: "Kalsa Foods - Premium Indian Masala",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kalsa Foods | Premium Indian Masala",
     description: "Authentic taste of India with Kalsa Foods Premium Spices.",
-    images: ["/og-image.jpg"],
+    images: ["https://kalsafoods.com/Front.png"],
   },
   robots: {
     index: true,

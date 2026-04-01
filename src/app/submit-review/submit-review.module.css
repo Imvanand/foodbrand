@@ -360,3 +360,12 @@
     font-weight: 600;
     cursor: pointer;
 }
+
+.ratingText {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #ff9f1c;
+    font-size: 1.1rem;
+    min-height: 1.5rem;
+}

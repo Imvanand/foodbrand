@@ -5,7 +5,7 @@ import { Search, Star, Loader2, CheckCircle, Upload, ShoppingBag, X } from 'luci
 import styles from './submit-review.module.css';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+
 
 function ReviewFormContent() {
     // 1. Initial Verification State
@@ -19,7 +19,7 @@ function ReviewFormContent() {
 
     // 2. Review Form State (for multiple products)
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
-    const [isSumitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     
@@ -151,7 +151,21 @@ function ReviewFormContent() {
         }
     };
 
+    const [hover, setHover] = useState(0);
+
+    const getStarLabel = (rating: number) => {
+        switch(rating) {
+            case 5: return 'It\'s Amazing! 🌟';
+            case 4: return 'Really Good! ✨';
+            case 3: return 'Just Okay 😐';
+            case 2: return 'Not Great 😕';
+            case 1: return 'Very Poor 👎';
+            default: return 'Tap to Rate';
+        }
+    };
+
     if (isSuccess) return (
+// ... existing code ...
         <div className={styles.successContainer}>
             <div className={styles.card}>
                 <CheckCircle size={64} color="#224b33" />
@@ -232,7 +246,7 @@ function ReviewFormContent() {
                 <p>Order: {orderId} | {orderData.customerName}</p>
                 
                 <div className={styles.productList}>
-                    {orderData.products.map((p: any) => (
+                    {orderData?.products?.map((p: any) => (
                         <div key={p.id} className={styles.productItem} onClick={() => setSelectedProduct(p)}>
                             <img src={p.image || '/logo/logo.png'} alt={p.name} />
                             <div className={styles.productInfo}>
@@ -267,11 +281,16 @@ function ReviewFormContent() {
                             {[1, 2, 3, 4, 5].map((s) => (
                                 <Star 
                                     key={s} 
-                                    size={36} 
-                                    className={`${styles.star} ${s <= reviewForm.rating ? styles.filled : ''}`}
+                                    size={42} 
+                                    className={`${styles.star} ${(hover || reviewForm.rating) >= s ? styles.filled : ''}`}
+                                    onMouseEnter={() => setHover(s)}
+                                    onMouseLeave={() => setHover(0)}
                                     onClick={() => setReviewForm({ ...reviewForm, rating: s })}
                                 />
                             ))}
+                        </div>
+                        <div className={styles.ratingText}>
+                            {getStarLabel(hover || reviewForm.rating)}
                         </div>
                     </div>
 
@@ -330,10 +349,10 @@ function ReviewFormContent() {
 
                     <button 
                         type="submit" 
-                        disabled={isSumitting} 
+                        disabled={isSubmitting} 
                         className={styles.submitBtn}
                     >
-                        {isSumitting ? <Loader2 className="animate-spin" /> : 'Submit Review'}
+                        {isSubmitting ? <Loader2 className="animate-spin" /> : 'Submit Review'}
                     </button>
                 </form>
             </div>

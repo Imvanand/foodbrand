@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/client';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { product_id, order_id, rating, title, content, customer_name, verified_purchase } = body;
+        const { product_id, order_id, rating, title, content, customer_name, verified_purchase, images } = body;
         
         const supabase = await createClient();
 
@@ -23,7 +23,8 @@ export async function POST(req: Request) {
                 content,
                 customer_name,
                 verified_purchase: verified_purchase || false,
-                is_approved: true // Auto-approve for now, can be changed to false if manual moderation is needed
+                is_approved: true, // Auto-approve for now, can be changed to false if manual moderation is needed
+                images: images || []
             }])
             .select();
 
