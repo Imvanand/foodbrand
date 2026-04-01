@@ -5,10 +5,12 @@ import { Search, Star, Loader2, CheckCircle, Upload, ShoppingBag, X } from 'luci
 import styles from './submit-review.module.css';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function SubmitReviewPage() {
+function ReviewFormContent() {
     // 1. Initial Verification State
     const [isVerified, setIsVerified] = useState(false);
+    // ... existing states ...
     const [isVerifying, setIsVerifying] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [phone, setPhone] = useState('');
@@ -339,5 +341,19 @@ export default function SubmitReviewPage() {
                 </form>
             </div>
         </div>
+    );
+}
+
+export default function SubmitReviewPage() {
+    return (
+        <Suspense fallback={
+            <div className={styles.verifyContainer}>
+                <div className={styles.verifyCard} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Loader2 className="animate-spin" size={48} color="#224b33" />
+                </div>
+            </div>
+        }>
+            <ReviewFormContent />
+        </Suspense>
     );
 }
