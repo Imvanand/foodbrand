@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { Search, Star, Loader2, CheckCircle, Upload, ShoppingBag, X } from 'lucide-react';
 import styles from './submit-review.module.css';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function SubmitReviewPage() {
+function ReviewFormContent() {
     // 1. Initial Verification State
     const [isVerified, setIsVerified] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
@@ -25,13 +25,13 @@ export default function SubmitReviewPage() {
         rating: 5,
         title: '',
         content: '',
-        images: [] as string[] // Store base64 or preview URLs
+        images: [] as string[]
     });
 
     const searchParams = useSearchParams();
 
     // 3. Auto-load from Magic Link
-    React.useEffect(() => {
+    useEffect(() => {
         const urlOrderId = searchParams.get('id');
         const urlPhone = searchParams.get('phone');
         
@@ -41,31 +41,30 @@ export default function SubmitReviewPage() {
             
             // Auto-trigger verification if enough data exists
             if (urlOrderId && urlPhone) {
+                const autoVerify = async (oid: string, ph: string) => {
+                    setIsVerifying(true);
+                    setVerificationError('');
+                    try {
+                        const res = await fetch('/api/reviews/verify-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ orderId: oid, phone: ph })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            setOrderData(data);
+                            setIsVerified(true);
+                        }
+                    } catch (err) {
+                        console.error("Auto-verify failed", err);
+                    } finally {
+                        setIsVerifying(false);
+                    }
+                };
                 autoVerify(urlOrderId, urlPhone);
             }
         }
     }, [searchParams]);
-
-    const autoVerify = async (oid: string, ph: string) => {
-        setIsVerifying(true);
-        setVerificationError('');
-        try {
-            const res = await fetch('/api/reviews/verify-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderId: oid, phone: ph })
-            });
-            const data = await res.json();
-            if (data.success) {
-                setOrderData(data);
-                setIsVerified(true);
-            }
-        } catch (err) {
-            console.error("Auto-verify failed", err);
-        } finally {
-            setIsVerifying(false);
-        }
-    };
 
     const handleVerify = async (e: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -122,8 +121,6 @@ export default function SubmitReviewPage() {
         setIsSubmitting(true);
 
         try {
-            // Note: In production, images should be uploaded to Supabase Storage first.
-            // For now, we'll send them as a list (to be handled by the API).
             const res = await fetch('/api/reviews/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -135,7 +132,7 @@ export default function SubmitReviewPage() {
                     content: reviewForm.content,
                     customer_name: orderData.customerName,
                     verified_purchase: true,
-                    images: reviewForm.images // Sending the base64 list
+                    images: reviewForm.images
                 })
             });
             
@@ -339,5 +336,19 @@ export default function SubmitReviewPage() {
                 </form>
             </div>
         </div>
+    );
+}
+
+export default function SubmitReviewPage() {
+    return (
+        <Suspense fallback={
+            <div className={styles.verifyContainer}>
+                <div className={styles.verifyCard} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Loader2 className="animate-spin" size={48} color="#224b33" />
+                </div>
+            </div>
+        }>
+            <ReviewFormContent />
+        </Suspense>
     );
 }
