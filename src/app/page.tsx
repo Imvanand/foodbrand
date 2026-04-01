@@ -12,9 +12,9 @@ export const metadata: Metadata = {
     siteName: "Kalsa Foods",
     images: [
       {
-        url: "/Front.png", // Direct product image for the large preview
-        width: 800,
-        height: 800,
+        url: "https://kalsafoods.com/Front.png", // Absolute URL for social platforms
+        width: 1200,
+        height: 630,
         alt: "Kalsa Foods Spice Mix Masala 100g",
       },
     ],
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kalsa Foods Spice Mix Masala | Authentic Indian Spices",
     description: "Premium All-Purpose Spice Blend with No Added Colors. Perfect for Sabzi, Paneer & Curry.",
-    images: ["/Front.png"],
+    images: ["https://kalsafoods.com/Front.png"],
   },
 };
 
